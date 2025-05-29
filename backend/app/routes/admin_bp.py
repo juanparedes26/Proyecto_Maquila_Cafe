@@ -55,7 +55,7 @@ def create_user():
 
 
 #RUTA LOG-IN ( CON TOKEN DE RESPUESTA )
-@admin_bp.route('/token', methods=['POST'])
+@admin_bp.route('/login', methods=['POST'])
 def get_token():
     try:
         #  Primero chequeamos que por el body venga la info necesaria:
@@ -77,7 +77,7 @@ def get_token():
             expires = timedelta(minutes=30)  # pueden ser "hours", "minutes", "days","seconds"
 
             user_id = login_user.id       # recuperamos el id del usuario para crear el token...
-            access_token = create_access_token(identity=user_id, expires_delta=expires)   # creamos el token con tiempo vencimiento
+            access_token = create_access_token(identity=str(user_id), expires_delta=expires)   # creamos el token con tiempo vencimiento
             return jsonify({ 'access_token':access_token}), 200  # Enviamos el token al front ( si es necesario serializamos el "login_user" y tambien lo enviamos en el objeto json )
 
         else:
