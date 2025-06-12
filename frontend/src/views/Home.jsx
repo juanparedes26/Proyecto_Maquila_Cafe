@@ -1,7 +1,27 @@
-import React, {useContext} from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Context } from '../js/store/appContext.jsx';
 
 function Home() {
+
+  const { store, actions } = useContext(Context);
+
+
+  useEffect(() => {
+
+    const getMsgDemo = async () => {
+      const msg = await actions.demoFunction();
+
+      if (!msg) {
+        store.demoMsg = "Error al obtener el mensaje";
+        return false
+      }
+
+    }
+
+    getMsgDemo();
+
+  }, []);
+
   return (
     <div>
       {/* Navbar */}
@@ -45,6 +65,9 @@ function Home() {
           </p>
           <button className="btn btn-primary btn-lg me-2">Empezar Ahora</button>
           <button className="btn btn-outline-secondary btn-lg">Más Información</button>
+        </div>
+        <div className="alert alert-success mt-3 w-50 mx-auto" role="alert">
+          {store.demoMsg}
         </div>
       </header>
 
