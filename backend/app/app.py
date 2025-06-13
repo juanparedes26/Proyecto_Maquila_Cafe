@@ -7,13 +7,16 @@ from routes.admin_bp import admin_bp                       # Acá importamos rut
 from routes.public_bp import public_bp                     # Acá importamos rutas public
 from database import db                             # Acá importamos la base de datos inicializada
 from flask_cors import CORS
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 # ENCRIPTACION JWT y BCRYPT-------
 
-app.config["JWT_SECRET_KEY"] = "valor-variable"  # clave secreta para firmar los tokens.( y a futuro va en un archivo .env)
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")  # clave secreta para firmar los tokens.( y a futuro va en un archivo .env)
 jwt = JWTManager(app)  # isntanciamos jwt de JWTManager utilizando app para tener las herramientas de encriptacion.
 bcrypt = Bcrypt(app)   # para encriptar password
 
@@ -30,7 +33,7 @@ app.register_blueprint(public_bp, url_prefix='/public')  # blueprint public_bp
 
 # DATABASE---------------
 db_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'instance', 'mydatabase.db')
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
 
 
 print(f"Ruta de la base de datos: {db_path}")

@@ -2,53 +2,43 @@ import React, { useContext, useEffect } from 'react'
 import { Context } from '../js/store/appContext.jsx';
 
 function Home() {
-
   const { store, actions } = useContext(Context);
 
-
   useEffect(() => {
-
     const getMsgDemo = async () => {
       const msg = await actions.demoFunction();
-
       if (!msg) {
-        store.demoMsg = "Error al obtener el mensaje";
-        return false
+        store.demoMsg = "Error fetching message";
+        return false;
       }
-
-    }
-
+    };
     getMsgDemo();
-
   }, []);
 
   return (
-    <div>
-      {/* Navbar */}
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div className="container-fluid">
-          <a className="navbar-brand" href="#">Mi Marca</a>
+    <div className="min-vh-100 d-flex flex-column">
+      {/* Navigation */}
+      <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div className="container">
+          <a className="navbar-brand" href="#">Flask + React Boilerplate</a>
           <button
             className="navbar-toggler"
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#navbarNav"
-            aria-controls="navbarNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
           >
             <span className="navbar-toggler-icon"></span>
           </button>
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav ms-auto">
               <li className="nav-item">
-                <a className="nav-link active" aria-current="page" href="#inicio">Inicio</a>
+                <a className="nav-link active" href="#home">Home</a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#caracteristicas">Características</a>
+                <a className="nav-link" href="#features">Features</a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#contacto">Contacto</a>
+                <a className="nav-link" href="#api">API Demo</a>
               </li>
             </ul>
           </div>
@@ -56,55 +46,70 @@ function Home() {
       </nav>
 
       {/* Hero Section */}
-      <header id="inicio" className="py-5 text-center bg-light">
-        <div className="container">
-          <h1 className="display-4 fw-bold mb-3">Tu Solución Innovadora Aquí</h1>
+      <main className="flex-grow-1 d-flex align-items-center">
+        <div className="container text-center py-5">
+          <h1 className="display-4 fw-bold mb-4">Welcome to Your Flask + React App</h1>
           <p className="lead mb-4">
-            Descripción breve y convincente de lo que ofrece tu producto o servicio.
-            Atrae a tus visitantes desde el primer momento.
+            A modern, scalable full-stack application boilerplate
           </p>
-          <button className="btn btn-primary btn-lg me-2">Empezar Ahora</button>
-          <button className="btn btn-outline-secondary btn-lg">Más Información</button>
+          <div className="d-flex justify-content-center gap-3">
+            <a href="#features" className="btn btn-primary btn-lg">Get Started</a>
+            <a href="#api" className="btn btn-outline-secondary btn-lg">API Demo</a>
+          </div>
         </div>
-        <div className="alert alert-success mt-3 w-50 mx-auto" role="alert">
-          {store.demoMsg}
+      </main>
+
+      {/* API Demo Section */}
+      <section id="api" className="py-5">
+        <div className="container text-center">
+          <h2 className="mb-4">API Demo</h2>
+          <p className="lead mb-4">Test the backend API connection:</p>
+          <div className="alert alert-info w-75 mx-auto">
+            <strong>API Response:</strong> {store.demoMsg || 'Click the button to test'}
+          </div>
+          <button
+            className="btn btn-primary"
+            onClick={() => actions.demoFunction()}
+          >
+            Test API Connection
+          </button>
         </div>
-      </header>
+      </section>
 
       {/* Features Section */}
-      <section id="caracteristicas" className="py-5">
+      <section id="features" className="py-5 bg-light">
         <div className="container">
-          <h2 className="text-center mb-5">Características Principales</h2>
-          <div className="row text-center">
-            <div className="col-md-4 mb-4">
+          <h2 className="text-center mb-5">Key Features</h2>
+          <div className="row g-4">
+            <div className="col-md-4">
               <div className="card h-100 shadow-sm">
-                <div className="card-body">
-                  <i className="bi bi-rocket-fill h1 text-primary"></i> {/* Requiere Bootstrap Icons */}
-                  <h5 className="card-title mt-3">Rendimiento Óptimo</h5>
-                  <p className="card-text">
-                    Experimenta una velocidad y eficiencia sin precedentes con nuestra tecnología de vanguardia.
+                <div className="card-body text-center">
+                  <i className="bi bi-lightning-charge-fill h1 text-primary mb-3"></i>
+                  <h5>Fast Development</h5>
+                  <p className="text-muted">
+                    Quick setup with modern development tools and hot-reloading
                   </p>
                 </div>
               </div>
             </div>
-            <div className="col-md-4 mb-4">
+            <div className="col-md-4">
               <div className="card h-100 shadow-sm">
-                <div className="card-body">
-                  <i className="bi bi-shield-lock-fill h1 text-success"></i> {/* Requiere Bootstrap Icons */}
-                  <h5 className="card-title mt-3">Seguridad Robusta</h5>
-                  <p className="card-text">
-                    Tus datos están protegidos con los más altos estándares de seguridad y cifrado.
+                <div className="card-body text-center">
+                  <i className="bi bi-shield-lock-fill h1 text-success mb-3"></i>
+                  <h5>Secure</h5>
+                  <p className="text-muted">
+                    Built-in authentication and security best practices
                   </p>
                 </div>
               </div>
             </div>
-            <div className="col-md-4 mb-4">
+            <div className="col-md-4">
               <div className="card h-100 shadow-sm">
-                <div className="card-body">
-                  <i className="bi bi-gem h1 text-info"></i> {/* Requiere Bootstrap Icons */}
-                  <h5 className="card-title mt-3">Diseño Intuitivo</h5>
-                  <p className="card-text">
-                    Una interfaz amigable y fácil de usar que mejora tu experiencia.
+                <div className="card-body text-center">
+                  <i className="bi bi-arrow-repeat h1 text-info mb-3"></i>
+                  <h5>Scalable</h5>
+                  <p className="text-muted">
+                    Modular architecture ready for growth
                   </p>
                 </div>
               </div>
@@ -113,31 +118,12 @@ function Home() {
         </div>
       </section>
 
-      {/* Call to Action Section */}
-      <section className="bg-primary text-white py-5">
-        <div className="container text-center">
-          <h2 className="mb-3">¿Listo para transformar tu negocio?</h2>
-          <p className="lead mb-4">
-            ¡No esperes más! Únete a miles de clientes satisfechos hoy mismo.
-          </p>
-          <button className="btn btn-light btn-lg">¡Regístrate Ahora!</button>
-        </div>
-      </section>
-
-      {/* Contact Section (simple) */}
-      <section id="contacto" className="py-5">
-        <div className="container text-center">
-          <h2 className="mb-4">Contáctanos</h2>
-          <p className="lead mb-4">¿Tienes preguntas? Estamos aquí para ayudarte.</p>
-          <p className="mb-1">Email: info@mimarcacompany.com</p>
-          <p className="mb-0">Teléfono: +123 456 7890</p>
-        </div>
-      </section>
-
       {/* Footer */}
-      <footer className="bg-dark text-white text-center py-4">
-        <div className="container">
-          <p className="mb-0">&copy; {new Date().getFullYear()} Mi Marca. Todos los derechos reservados.</p>
+      <footer className="bg-dark text-white py-4">
+        <div className="container text-center">
+          <p className="mb-0">
+            &copy; {new Date().getFullYear()} Flask + React Boilerplate. All rights reserved.
+          </p>
         </div>
       </footer>
     </div>

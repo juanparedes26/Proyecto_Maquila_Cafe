@@ -1,5 +1,6 @@
 # === PYTHON / FLASK ===
 backend/venv/
+backend/instance/
 __pycache__/
 *.pyc
 *.pyo
@@ -8,7 +9,6 @@ instance/
 .env
 .env.*
 backend/.env
-backend/.env.*
 
 # === NODE / VITE / REACT ===
 frontend/node_modules/
@@ -16,7 +16,7 @@ frontend/dist/
 frontend/.vite/
 frontend/.parcel-cache/
 frontend/.env
-frontend/.env.*
+frontend/tsconfig.json
 
 # === LOGS ===
 *.log
