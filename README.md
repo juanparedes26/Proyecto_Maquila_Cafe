@@ -147,5 +147,5 @@ README.md
 
 <p align="center" style="font-size:1.2em;">
   <b>✨ Hecho con ❤️ por Fede</b> <br/>
-  <sub>Con una mención especial a <b>David Cunha</b> 🙌</sub>
+  <sub>Con una mención especial a <b>[David Cunha](https://www.youtube.com/telodigoencodigo)</b> 🙌</sub>
 </p>
