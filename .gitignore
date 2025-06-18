@@ -9,6 +9,8 @@ instance/
 .env
 .env.*
 backend/.env
+backend/.env.prod
+
 
 # === NODE / VITE / REACT ===
 frontend/node_modules/

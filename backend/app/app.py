@@ -8,10 +8,11 @@ from routes.public_bp import public_bp                     # Acá importamos rut
 from database import db                             # Acá importamos la base de datos inicializada
 from flask_cors import CORS
 from dotenv import load_dotenv
+from flask import send_from_directory
 
 load_dotenv()
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="front/build", static_url_path="/")
 
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 # ENCRIPTACION JWT y BCRYPT-------
@@ -47,6 +48,22 @@ with app.app_context():
     db.create_all() # Nos aseguramos que este corriendo en el contexto del proyecto.
 # -----------------------
 
+# Ruta para servir el index.html del frontend
+@app.route("/")
+def serve_frontend():
+    return send_from_directory(app.static_folder, "index.html")
+
+# Ruta para servir todos los archivos estáticos del frontend
+@app.route('/<path:path>')
+def serve_static_files(path):
+    # Intentamos servir cualquier archivo estático del frontend (js, css, imágenes)
+    if os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    else:
+        # Si no existe archivo estático, devolvemos index.html para que React maneje rutas SPA
+        return send_from_directory(app.static_folder, "index.html")
+
+
 # AL FINAL ( detecta que encendimos el servidor desde terminal y nos da detalles de los errores )
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5100)

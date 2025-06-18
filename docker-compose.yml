@@ -1,36 +1,18 @@
-version: '3.8'
+version: '3.9'
 
 services:
-  backend:
+  app:
     build:
-      context: ./backend
+      context: .
       dockerfile: Dockerfile
-    container_name: flask-backend
+    container_name: fullstackboiler
     restart: unless-stopped
     env_file:
       - ./backend/.env.prod
     ports:
-      - "5000:5000"
+      - "5100:5100"
     volumes:
-      - ./backend:/app
-    networks:
-      - app-network
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: react-frontend
-    restart: unless-stopped
-    environment:
-      - VITE_BACKEND_URL=http://localhost:5000
-      - VITE_BASENAME=/
-    ports:
-      - "5173:5173"
-    env_file:
-      - ./frontend/.env.prod
-    depends_on:
-      - backend
+      - ./instance:/app/backend/app/instance  # Para que se persista la DB en local
     networks:
       - app-network
 
