@@ -11,6 +11,8 @@ instance/
 backend/.env
 backend/.env.prod
 
+backend/.env.example
+
 
 # === NODE / VITE / REACT ===
 frontend/node_modules/
