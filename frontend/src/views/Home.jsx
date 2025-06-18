@@ -18,7 +18,7 @@ function Home() {
   return (
     <div className="min-vh-100 d-flex flex-column">
       {/* Navigation */}
-      <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
+      <nav className="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
         <div className="container">
           <a className="navbar-brand" href="#">Flask + React Boilerplate</a>
           <button
@@ -46,7 +46,7 @@ function Home() {
       </nav>
 
       {/* Hero Section */}
-      <main className="flex-grow-1 d-flex align-items-center">
+      <main className="flex-grow-1 d-flex align-items-center pt-5">
         <div className="container text-center py-5">
           <h1 className="display-4 fw-bold mb-4">Welcome to Your Flask + React App</h1>
           <p className="lead mb-4">
@@ -60,7 +60,7 @@ function Home() {
       </main>
 
       {/* API Demo Section */}
-      <section id="api" className="py-5">
+      <section id="api" className="pb-5">
         <div className="container text-center">
           <h2 className="mb-4">API Demo</h2>
           <p className="lead mb-4">Test the backend API connection:</p>
@@ -122,7 +122,7 @@ function Home() {
       <footer className="bg-dark text-white py-4">
         <div className="container text-center">
           <p className="mb-0">
-            &copy; {new Date().getFullYear()} Flask + React Boilerplate. All rights reserved.
+            &copy; {new Date().getFullYear()} Made with ❤️ by Federico Serron. All rights reserved.
           </p>
         </div>
       </footer>
