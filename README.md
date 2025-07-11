@@ -50,10 +50,11 @@ cd tu-repo
 3. Iniciar el backend:
 
    ```bash
-   python backend/app/app.py
+   cd backend/
+   python -m run.app
    ```
 
-   El backend estará disponible en: [http://localhost:5000](http://localhost:5000)
+   El backend estará disponible en: [http://localhost:5100](http://localhost:5100)
 
 ---
 
@@ -89,7 +90,7 @@ Asegúrate de tener los archivos `.env` necesarios en cada carpeta (`backend` y 
 
 ### backend/.env
 ```
-FLASK_APP=app.py
+FLASK_APP=app/run.py
 FLASK_ENV=development
 SECRET_KEY=your-secret-key-here
 DATABASE_URL=sqlite:///app.db
@@ -97,7 +98,7 @@ DATABASE_URL=sqlite:///app.db
 
 ### frontend/.env
 ```
-VITE_BACKEND_URL=http://localhost:5000
+VITE_BACKEND_URL=http://localhost:5100
 VITE_BASENAME=/
 ```
 
@@ -111,7 +112,7 @@ Si prefieres levantar todo con Docker Compose:
 docker-compose up --build
 ```
 
-Esto levantará el backend en `localhost:5000` y el frontend en `localhost:5173`.
+Esto levantará el backend en `localhost:5100` y el frontend en `localhost:5173`.
 
 ---
 
