@@ -1,11 +1,11 @@
-from flask import Blueprint, request, jsonify # Blueprint para modularizar y relacionar con app
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity   # Jwt para tokens
+from flask import Blueprint, request, jsonif
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from app import db, bcrypt
-from app.models import User                                          # importar tabla "User" de models
-from datetime import timedelta                                   # importa tiempo especifico para rendimiento de token válido
+from app.models import User
+from datetime import timedelta
 
 
-admin_bp = Blueprint('admin', __name__)     # instanciar admin_bp desde clase Blueprint para crear las rutas.
+admin_bp = Blueprint('admin', __name__)
 
 # RUTA TEST de http://127.0.0.1:5000/admin_bp que muestra "Hola mundo":
 @admin_bp.route('/', methods=['GET'])
@@ -30,8 +30,6 @@ def create_user():
 
         password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
 
-
-        # Ensamblamos el usuario nuevo
         new_user = User(email=email, password=password_hash, name=name)
 
 
@@ -54,27 +52,24 @@ def create_user():
 @admin_bp.route('/login', methods=['POST'])
 def get_token():
     try:
-        #  Primero chequeamos que por el body venga la info necesaria:
+
         email = request.json.get('email')
         password = request.json.get('password')
 
         if not email or not password:
             return jsonify({'error': 'Email and password are required.'}), 400
         
-        # Buscamos al usuario con ese correo electronico ( si lo encuentra lo guarda ):
         login_user = User.query.filter_by(email=request.json['email']).one()
 
-        # Verificamos que el password sea correcto:
-        password_from_db = login_user.password #  Si loguin_user está vacio, da error y se va al "Except".
+        password_from_db = login_user.password
         true_o_false = bcrypt.check_password_hash(password_from_db, password)
         
-        # Si es verdadero generamos un token y lo devuelve en una respuesta JSON:
         if true_o_false:
-            expires = timedelta(minutes=30)  # pueden ser "hours", "minutes", "days","seconds"
+            expires = timedelta(minutes=30)
 
-            user_id = login_user.id       # recuperamos el id del usuario para crear el token...
-            access_token = create_access_token(identity=str(user_id), expires_delta=expires)   # creamos el token con tiempo vencimiento
-            return jsonify({ 'access_token':access_token}), 200  # Enviamos el token al front ( si es necesario serializamos el "login_user" y tambien lo enviamos en el objeto json )
+            user_id = login_user.id
+            access_token = create_access_token(identity=str(user_id), expires_delta=expires)
+            return jsonify({ 'access_token':access_token}), 200
 
         else:
             return {"Error":"Contraseña  incorrecta"}
@@ -82,12 +77,11 @@ def get_token():
     except Exception as e:
         return {"Error":"El email proporcionado no corresponde a ninguno registrado: " + str(e)}, 500
     
-# EJEMPLO DE RUTA RESTRINGIDA POR TOKEN. ( LA MISMA RECUPERA TODOS LOS USERS Y LO ENVIA PARA QUIEN ESTÉ LOGUEADO )
     
 @admin_bp.route('/users')
-@jwt_required()  # Decorador para requerir autenticación con JWT
+@jwt_required()
 def show_users():
-    current_user_id = get_jwt_identity()  # Obtiene la id del usuario del token
+    current_user_id = get_jwt_identity()
     if current_user_id:
         users = User.query.all()
         user_list = []

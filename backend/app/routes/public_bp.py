@@ -1,8 +1,3 @@
-# public_bp.py (Blueprint para las rutas públicas)
-# Public está vacio para que lo llenes vos. Podes tener en cuenta las rutas de "admin_bp.py" Podrias hacer casi lo mismo acá.
-# Si vas a hacer un copy paste, acordate que tenés que cambiarle los nombres a todas las rutas @admin_bp a @public_bp.
-# Después no digas que no te avisé...
-
 from flask import Blueprint, jsonify
 
 public_bp = Blueprint('public', __name__)
