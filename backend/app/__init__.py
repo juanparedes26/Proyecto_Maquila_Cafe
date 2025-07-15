@@ -1,4 +1,6 @@
 import os
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
@@ -29,6 +31,11 @@ def create_app():
     jwt.init_app(app)
     migrate.init_app(app, db, compare_type=True)
 
+
+    admin = Admin(app, name="Panel Admin", template_mode="bootstrap3")
+    from app.modelView import register_admin_views
+    register_admin_views(admin, db)
+
     # Creamos carpeta de base de datos si no existe
     db_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'instance', 'mydatabase.db')
     print(f"Ruta de la base de datos: {db_path}")
@@ -38,7 +45,7 @@ def create_app():
     # Registramos blueprints
     from app.routes.admin_bp import admin_bp
     from app.routes.public_bp import public_bp
-    app.register_blueprint(admin_bp, url_prefix='/admin')
+    app.register_blueprint(admin_bp, url_prefix='/panel', name='panel_bp')  # Cambia '/admin' por '/panel'
     app.register_blueprint(public_bp, url_prefix='/public')
 
     return app
