@@ -2,7 +2,7 @@ from flask_admin.contrib.sqla import ModelView
 from app.models import User,Cliente,Maquila
 
 class UserAdmin(ModelView):
-    column_list = ('id', 'name', 'email')           # Solo muestra estos campos en la lista
+    column_list = ('id', 'name', 'username')           # Solo muestra estos campos en la lista
     column_exclude_list = ['password']              # Oculta 'password' en la lista y detalles
     form_excluded_columns = ['password']     
     
@@ -14,7 +14,7 @@ class MaquilaAdmin(ModelView):
         'id',
         'fecha',
         'cliente_id',
-        'cliente.nombre',         # Muestra el nombre del cliente
+        'cliente.nombre',         
         'peso_kg',
         'esta_trillado',
         'peso_despues_trilla_kg',
