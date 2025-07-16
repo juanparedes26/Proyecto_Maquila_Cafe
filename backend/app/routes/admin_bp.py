@@ -65,11 +65,15 @@ def get_token():
         true_o_false = bcrypt.check_password_hash(password_from_db, password)
         
         if true_o_false:
-            expires = timedelta(minutes=30)
+            expires = timedelta(minutes=60)
 
             user_id = login_user.id
             access_token = create_access_token(identity=str(user_id), expires_delta=expires)
-            return jsonify({ 'access_token':access_token}), 200
+            return jsonify({ 'access_token':access_token,"user":{
+                'id': login_user.id,
+                'name': login_user.name,
+                'username': login_user.username
+            }}), 200
 
         else:
             return {"Error":"Contraseña  incorrecta"}
