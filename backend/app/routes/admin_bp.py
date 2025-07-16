@@ -101,7 +101,7 @@ def show_clientes():
     else:
         return {"Error": "Token inválido o no proporcionado"}, 401
     
-@admin_bp.route("/clientes", methods=["POST"])
+@admin_bp.route("/add/clientes", methods=["POST"])
 @jwt_required()
 def create_cliente():
     current_user_id = get_jwt_identity()
@@ -118,13 +118,16 @@ def create_cliente():
         new_cliente = Cliente(nombre=nombre, celular=celular, user_id=current_user_id)
         db.session.add(new_cliente)
         db.session.commit()
-
-        return jsonify({'message': 'Cliente created successfully.', 'cliente_id': new_cliente.id}), 201
+        return jsonify({
+            'id': new_cliente.id,
+            'nombre': new_cliente.nombre,
+            'celular': new_cliente.celular
+        }), 201
 
     except Exception as e:
         return jsonify({'error': 'Error in cliente creation: ' + str(e)}), 500
     
-@admin_bp.route("/maquilas", methods=["POST"])
+@admin_bp.route("/add/maquilas", methods=["POST"])
 @jwt_required()
 
 def create_maquila():
@@ -163,7 +166,22 @@ def create_maquila():
         db.session.add(new_maquila)
         db.session.commit()
 
-        return jsonify({'message': 'Maquila created successfully.', 'maquila_id': new_maquila.id}), 201
+        return jsonify({
+            'id': new_maquila.id,
+            'fecha': new_maquila.fecha,
+            'cliente_id': new_maquila.cliente_id,
+            'peso_kg': new_maquila.peso_kg,
+            'esta_trillado': new_maquila.esta_trillado,
+            'peso_despues_trilla_kg': new_maquila.peso_despues_trilla_kg,
+            'grado_tostion': new_maquila.grado_tostion,
+            'tipo_empaque': new_maquila.tipo_empaque,
+            'porcentaje_merma': new_maquila.porcentaje_merma,
+            'precio_total': new_maquila.precio_total,
+            'detalle_precio': new_maquila.detalle_precio,
+            'observaciones': new_maquila.observaciones,
+            'nombre_cliente': new_maquila.cliente.nombre if new_maquila.cliente else None,
+            'celular_cliente': new_maquila.cliente.celular if new_maquila.cliente else None,
+        }), 201
 
     except Exception as e:
         return jsonify({'error': 'Error in maquila creation: ' + str(e)}), 500
@@ -201,6 +219,40 @@ def get_maquilas():
 
     except Exception as e:
         return jsonify({'error': 'Error fetching maquilas: ' + str(e)}), 500
+    
+@admin_bp.route("/maquilas/<int:maquila_id>", methods=["GET"])
+@jwt_required()
+def get_maquila(maquila_id):
+    maquila = Maquila.query.get_or_404(maquila_id)
+    maquila_dict = {
+        'id': maquila.id,
+        'fecha': maquila.fecha,
+        'cliente_id': maquila.cliente_id,
+        'peso_kg': maquila.peso_kg,
+        'esta_trillado': maquila.esta_trillado,
+        'peso_despues_trilla_kg': maquila.peso_despues_trilla_kg,
+        'grado_tostion': maquila.grado_tostion,
+        'tipo_empaque': maquila.tipo_empaque,
+        'porcentaje_merma': maquila.porcentaje_merma,
+        'precio_total': maquila.precio_total,
+        'detalle_precio': maquila.detalle_precio,
+        'observaciones': maquila.observaciones,
+        'nombre_cliente': maquila.cliente.nombre if maquila.cliente else None,
+        'celular_cliente': maquila.cliente.celular if maquila.cliente else None,
+    }
+    return jsonify(maquila_dict), 200
+    
+@admin_bp.route("/clientes/<int:cliente_id>", methods=["GET"])
+@jwt_required()
+def get_cliente(cliente_id):
+    cliente = Cliente.query.get_or_404(cliente_id)
+    cliente_dict = {
+        'id': cliente.id,
+        'nombre': cliente.nombre,
+        'celular': cliente.celular
+    }
+    return jsonify(cliente_dict), 200
+
 
 @admin_bp.route("/clientes/<int:cliente_id>/maquilas", methods=["GET"])
 @jwt_required()
@@ -231,6 +283,7 @@ def update_cliente(cliente_id):
     if celular: cliente.celular = celular
     db.session.commit()
     return jsonify({'message': 'Cliente actualizado'}), 200
+
 @admin_bp.route("/clientes/<int:cliente_id>", methods=["DELETE"])
 @jwt_required()
 def delete_cliente(cliente_id):
@@ -243,7 +296,7 @@ def delete_cliente(cliente_id):
 @jwt_required()
 def update_maquila(maquila_id):
     maquila = Maquila.query.get_or_404(maquila_id)
-    # Actualiza los campos según el request
+   
     for field in ['peso_kg', 'esta_trillado', 'peso_despues_trilla_kg', 'grado_tostion', 'tipo_empaque', 'porcentaje_merma', 'precio_total', 'detalle_precio', 'observaciones']:
         value = request.json.get(field)
         if value is not None:
