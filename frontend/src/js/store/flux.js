@@ -110,6 +110,21 @@ const getState = ({ getStore, getActions, setStore }) => {
 					
 				}
 			},
+			logout: () => {
+
+				localStorage.removeItem("token");
+				localStorage.removeItem("currentUser");
+				setStore({
+					token: null,
+					currentUser: null
+				});
+			
+				MySwal.fire({
+					icon: 'success',
+					title: 'Logout exitoso'
+				});
+			},
+			
 			
 		}
 	};
