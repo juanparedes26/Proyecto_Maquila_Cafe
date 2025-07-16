@@ -1,131 +1,78 @@
-import React, { useContext, useEffect } from 'react'
-import { Context } from '../js/store/appContext.jsx';
+import React from 'react';
+import maquilaImg from "../assets/Maquila.jpg";
 
 function Home() {
-  const { store, actions } = useContext(Context);
-
-  useEffect(() => {
-    const getMsgDemo = async () => {
-      const msg = await actions.demoFunction();
-      if (!msg) {
-        store.demoMsg = "Error fetching message";
-        return false;
-      }
-    };
-    getMsgDemo();
-  }, []);
-
   return (
-    <div className="min-vh-100 d-flex flex-column">
-      {/* Navigation */}
-      <nav className="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
-        <div className="container">
-          <a className="navbar-brand" href="#">Flask + React Boilerplate</a>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav ms-auto">
-              <li className="nav-item">
-                <a className="nav-link active" href="#home">Home</a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="#features">Features</a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="#api">API Demo</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <main className="flex-grow-1 d-flex align-items-center pt-5">
-        <div className="container text-center py-5">
-          <h1 className="display-4 fw-bold mb-4">Welcome to Your Flask + React App</h1>
-          <p className="lead mb-4">
-            A modern, scalable full-stack application boilerplate
-          </p>
-          <div className="d-flex justify-content-center gap-3">
-            <a href="#features" className="btn btn-primary btn-lg">Get Started</a>
-            <a href="#api" className="btn btn-outline-secondary btn-lg">API Demo</a>
-          </div>
-        </div>
-      </main>
-
-      {/* API Demo Section */}
-      <section id="api" className="pb-5">
-        <div className="container text-center">
-          <h2 className="mb-4">API Demo</h2>
-          <p className="lead mb-4">Test the backend API connection:</p>
-          <div className="alert alert-info w-75 mx-auto">
-            <strong>API Response:</strong> {store.demoMsg || 'Click the button to test'}
-          </div>
-          <button
-            className="btn btn-primary"
-            onClick={() => actions.demoFunction()}
-          >
-            Test API Connection
-          </button>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section id="features" className="py-5 bg-light">
-        <div className="container">
-          <h2 className="text-center mb-5">Key Features</h2>
-          <div className="row g-4">
-            <div className="col-md-4">
-              <div className="card h-100 shadow-sm">
-                <div className="card-body text-center">
-                  <i className="bi bi-lightning-charge-fill h1 text-primary mb-3"></i>
-                  <h5>Fast Development</h5>
-                  <p className="text-muted">
-                    Quick setup with modern development tools and hot-reloading
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-4">
-              <div className="card h-100 shadow-sm">
-                <div className="card-body text-center">
-                  <i className="bi bi-shield-lock-fill h1 text-success mb-3"></i>
-                  <h5>Secure</h5>
-                  <p className="text-muted">
-                    Built-in authentication and security best practices
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-4">
-              <div className="card h-100 shadow-sm">
-                <div className="card-body text-center">
-                  <i className="bi bi-arrow-repeat h1 text-info mb-3"></i>
-                  <h5>Scalable</h5>
-                  <p className="text-muted">
-                    Modular architecture ready for growth
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-dark text-white py-4">
-        <div className="container text-center">
-          <p className="mb-0">
-            &copy; {new Date().getFullYear()} Made with ❤️ by Federico Serron. All rights reserved.
-          </p>
-        </div>
-      </footer>
+    <div
+      className="min-vh-100 w-100 d-flex flex-column justify-content-center"
+      style={{
+        backgroundImage: `url(${maquilaImg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        position: "relative",
+        margin: 0,
+        padding: 0
+      }}
+    >
+      {/* Capa oscura */}
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          background: "rgba(111, 78, 55, 0.7)",
+          zIndex: 1
+        }}
+      />
+      {/* Contenido con solo sombra fuerte al texto */}
+      <div
+        className="text-center d-flex flex-column align-items-center justify-content-center"
+        style={{
+          position: "relative",
+          zIndex: 2,
+          width: "100%",
+          maxWidth: "480px",
+          margin: "0 auto",
+          background: "none",
+          borderRadius: "18px",
+          boxShadow: "none",
+          padding: "32px 24px"
+        }}
+      >
+        <h1
+          className="mb-3"
+          style={{
+            color: "#fffbe7",
+            fontWeight: "bold",
+            textShadow: "2px 2px 10px #4b2e19, 0 0 8px #000"
+          }}
+        >
+          ¡Bienvenido a Maquilas Don Andres!
+        </h1>
+        <p
+          className="lead mb-4"
+          style={{
+            color: "#fffbe7",
+            fontWeight: "500",
+            textShadow: "2px 2px 8px #4b2e19, 0 0 6px #000"
+          }}
+        >
+          El mejor lugar para gestionar tus clientes y maquilas de café.<br />
+          <span style={{ color: "#fffbe7", textShadow: "1px 1px 6px #4b2e19" }}>
+            Sabor, tradición y eficiencia en cada proceso.
+          </span>
+        </p>
+        <a
+          href="/login"
+          className="btn btn-lg"
+          style={{ background: "#c0a16b", color: "#fffbe7", fontWeight: "bold" }}
+        >
+          Iniciar Sesión
+        </a>
+      </div>
     </div>
   );
 }
