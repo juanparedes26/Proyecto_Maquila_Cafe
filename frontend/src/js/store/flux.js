@@ -4,6 +4,7 @@ import withReactContent from 'sweetalert2-react-content';
 import { toast } from 'react-toastify';
 
 const MySwal = withReactContent(Swal);
+const initialToken = localStorage.getItem("token") || null;
 
 const getState = ({ getStore, setStore }) => {
 	return {
@@ -11,7 +12,7 @@ const getState = ({ getStore, setStore }) => {
 			
 			demoMsg: "",
 			users: [], // Lista de usuarios que viene de register , en mi caso serian los admins
-			token: null, // Token de autenticación
+			token: initialToken, // Token de autenticación
 			currentUser: null ,// Usuario actual que ha iniciado sesión
 			clientes: [], // Lista de clientes que se obtienen al hacer getClientes
 			maquilas: [], // Lista de maquilas que se obtienen al hacer getMaquilas
@@ -72,9 +73,9 @@ const getState = ({ getStore, setStore }) => {
 				
 			},
 			getClientes: async () => {
-    			const store = getStore();
+				const store = getStore();
 				try {
-					const res = await fetch(`${backendUrl}/clientes`, {
+					const res = await fetch(`${backendUrl}/clientes?ts=${Date.now()}`, {
 						method: "GET",
 						headers: {
 							"Content-Type": "application/json",
@@ -82,25 +83,17 @@ const getState = ({ getStore, setStore }) => {
 						}
 					});
 					const data = await res.json();
-					if (res.ok) {
-						setStore({ clientes: data }); 
+				
+					if (res.status === 200 && Array.isArray(data)) {
+						setStore({ ...store, clientes: data });
 					} else {
-						MySwal.fire({
-							icon: 'error',
-							title: 'Error al obtener clientes',
-							text: data.error || 'No se pudieron obtener los clientes'
-						});
-						return [];
+						toast.error(data.error || 'No se pudieron obtener los clientes');
 					}
 				} catch (error) {
-					MySwal.fire({
-						icon: 'error',
-						title: 'Error al obtener clientes',
-						text: error.message
-					});
-					return [];
+					toast.error('Error al obtener clientes: ' + error.message);
 				}
 			},
+		
 			addCliente: async (cliente) => {
 				const store = getStore();
 				try {
@@ -114,10 +107,12 @@ const getState = ({ getStore, setStore }) => {
 					});
 					const data = await res.json();
 					if (res.ok) {
-						setStore({ clientes: [...store.clientes, data] });
+						return true;
+				
 						 toast.success('Cliente agregado exitosamente');
 					} else {
 					 toast.error('No se pudo agregar el cliente');
+					 return false;
 					}
 				} catch (error) {
 					 toast.error('Error al agregar cliente: ' + error.message);

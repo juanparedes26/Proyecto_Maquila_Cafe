@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Navbar from './components/Navbar.jsx';
 import Footer from './components/Footer.jsx';
 import Login from './views/Login.jsx';
+import  Clientes from './views/Clientes.jsx';
 
 const Layout = () => {
     const basename = import.meta.env.VITE_BASENAME || "";
@@ -21,6 +22,8 @@ const Layout = () => {
                     <Routes>
                         <Route exact path='/' element={<Home />} />
                         <Route path='/login' element={<Login />} />
+                        <Route path='/clientes' element={<Clientes />} />
+                        {/* Puedes agregar más rutas aquí */}
                   
                     </Routes>
                 </div>
