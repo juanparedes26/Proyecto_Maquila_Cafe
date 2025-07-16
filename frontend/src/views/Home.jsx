@@ -1,7 +1,11 @@
-import React from 'react';
+
 import maquilaImg from "../assets/Maquila.jpg";
+import React, { useContext } from "react";
+import { Context } from "../js/store/appContext.jsx";
+import { Link } from "react-router-dom";
 
 function Home() {
+  const { store } = useContext(Context);
   return (
     <div
       className="min-vh-100 w-100 d-flex flex-column justify-content-center"
@@ -27,7 +31,7 @@ function Home() {
           zIndex: 1
         }}
       />
-      {/* Contenido con solo sombra fuerte al texto */}
+
       <div
         className="text-center d-flex flex-column align-items-center justify-content-center"
         style={{
@@ -65,13 +69,16 @@ function Home() {
             Sabor, tradición y eficiencia en cada proceso.
           </span>
         </p>
-        <a
-          href="/login"
-          className="btn btn-lg"
-          style={{ background: "#c0a16b", color: "#fffbe7", fontWeight: "bold" }}
-        >
-          Iniciar Sesión
-        </a>
+        {!store.token && (
+          <Link
+            to="/login"
+            className="btn btn-lg"
+            style={{ background: "#c0a16b", color: "#fffbe7", fontWeight: "bold" }}
+          >
+            Iniciar Sesión
+          </Link>
+        )}
+       
       </div>
     </div>
   );

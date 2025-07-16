@@ -1,6 +1,7 @@
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { toast } from 'react-toastify';
 
 const MySwal = withReactContent(Swal);
 
@@ -23,50 +24,7 @@ const getState = ({ getStore, setStore }) => {
                     return
 			},
 
-			register:async(username,password,name)=>{
-				const store= getStore();
-				try {
-					const res=await fetch(`${backendUrl}/users`,{
-						method: "POST",
-						headers:{
-							"Content-Type":"application/json",
-						},
-						body:JSON.stringify({
-							username:username,
-							password:password,
-							name:name
-						})
-					});
-					const data=await res.json();
-					if(res.ok){
-						MySwal.fire({
-								icon: 'success',
-								title: 'Login exitoso'
-							});
-						setStore({ users: [...store.users, data] }); 
-						return data;
-					}else{	
-						MySwal.fire({
-							icon: 'error',
-							title: 'Error al iniciar sesión',
-							text: data.message
-						});
-						return null;
-					}
-					
-				} catch (error) {
-					 MySwal.fire({
-							icon: 'error',
-							title: 'Error al iniciar sesión',
-							text: error.message
-						});
-					return{
-						error: "Error al crear el usuario: " + error.message
-					};
-					
-				}
-
-			},
+			
 			login:async(username,password)=>{
 				try {
 					const res=await fetch(`${backendUrl}/login`,{
@@ -80,11 +38,8 @@ const getState = ({ getStore, setStore }) => {
 						})
 					});
 					const data=await res.json();
-					if(res.ok){
-					MySwal.fire({
-							icon: 'success',
-							title: 'Login exitoso'
-						});
+					if(res.ok && data.access_token){
+					 toast.success('Login exitoso');
 						  setStore({
 							token: data.access_token,
 							currentUser: data.user
@@ -92,21 +47,13 @@ const getState = ({ getStore, setStore }) => {
 						localStorage.setItem("token", data.access_token);
 						return data;
 					}else{	
-						MySwal.fire({
-							icon: 'error',
-							title: 'Error al iniciar sesión',
-							text: data.message
-						});
+						 toast.error('No se pudo iniciar sesión');
 						
 						return null;
 					}
 					
 				} catch (error) {
-					 MySwal.fire({
-						icon: 'error',
-						title: 'Error al iniciar sesión',
-						text: error.message
-					});
+					 toast.error('Error al iniciar sesión: ' + error.message);
 					return{
 						error: "Error al iniciar sesión: " + error.message
 					};
@@ -122,10 +69,7 @@ const getState = ({ getStore, setStore }) => {
 					currentUser: null
 				});
 			
-				MySwal.fire({
-					icon: 'success',
-					title: 'Logout exitoso'
-				});
+				
 			},
 			getClientes: async () => {
     			const store = getStore();
@@ -171,23 +115,12 @@ const getState = ({ getStore, setStore }) => {
 					const data = await res.json();
 					if (res.ok) {
 						setStore({ clientes: [...store.clientes, data] });
-						MySwal.fire({
-							icon: 'success',
-							title: 'Cliente agregado exitosamente'
-						});
+						 toast.success('Cliente agregado exitosamente');
 					} else {
-						MySwal.fire({
-							icon: 'error',
-							title: 'Error al agregar cliente',
-							text: data.error || 'No se pudo agregar el cliente'
-						});
+					 toast.error('No se pudo agregar el cliente');
 					}
 				} catch (error) {
-					MySwal.fire({
-						icon: 'error',
-						title: 'Error al agregar cliente',
-						text: error.message
-					});
+					 toast.error('Error al agregar cliente: ' + error.message);
 				}
 			},
 			getMaquilas: async () => {
@@ -234,16 +167,9 @@ const getState = ({ getStore, setStore }) => {
 					const data = await res.json();
 					if (res.ok) {
 						setStore({ maquilas: [...store.maquilas, data] });
-						MySwal.fire({
-							icon: 'success',
-							title: 'Maquila agregada exitosamente'
-						});
+						toast.error('Maquila agregada exitosamente');
 					} else {
-						MySwal.fire({
-							icon: 'error',
-							title: 'Error al agregar maquila',
-							text: data.error || 'No se pudo agregar la maquila'
-						});
+						 toast.error('Error al agregar maquila: ' + (data.error || 'No se pudo agregar la maquila'));
 					}
 				} catch (error) {
 					MySwal.fire({
@@ -298,10 +224,7 @@ const getState = ({ getStore, setStore }) => {
 					});
 					const data = await res.json();
 					if (res.ok) {
-						MySwal.fire({
-							icon: 'success',
-							title: 'Cliente actualizado'
-						});
+						 toast.success('Cliente actualizado exitosamente');
 
 						setStore({
 							clientes: store.clientes.map(c =>
@@ -310,11 +233,7 @@ const getState = ({ getStore, setStore }) => {
 						});
 						return data;
 					} else {
-						MySwal.fire({
-							icon: 'error',
-							title: 'Error al actualizar cliente',
-							text: data.error || 'No se pudo actualizar el cliente'
-						});
+						 toast.error('Error al actualizar cliente: ' + (data.error || 'No se pudo actualizar el cliente'));
 						return null;
 					}
 				} catch (error) {
@@ -337,20 +256,13 @@ const getState = ({ getStore, setStore }) => {
 						}
 					});
 					if (res.ok) {
-						MySwal.fire({
-							icon: 'success',
-							title: 'Cliente eliminado'
-						});
+						 toast.success('Cliente eliminado exitosamente');
 						setStore({
 							clientes: store.clientes.filter(c => c.id !== clienteId)
 						});
 					} else {
 						const data = await res.json();
-						MySwal.fire({
-							icon: 'error',
-							title: 'Error al eliminar cliente',
-							text: data.error || 'No se pudo eliminar el cliente'
-						});
+						toast.error('Error al eliminar cliente: ' + (data.error || 'No se pudo eliminar el cliente'));
 					}
 				} catch (error) {
 					MySwal.fire({
@@ -371,20 +283,13 @@ const getState = ({ getStore, setStore }) => {
 						}
 					});
 					if (res.ok) {
-						MySwal.fire({
-							icon: 'success',
-							title: 'Maquila eliminada'
-						});
+						toast.success('Maquila eliminada exitosamente');
 						setStore({
 							maquilas: store.maquilas.filter(m => m.id !== maquilaId)
 						});
 					} else {
 						const data = await res.json();
-						MySwal.fire({
-							icon: 'error',
-							title: 'Error al eliminar maquila',
-							text: data.error || 'No se pudo eliminar la maquila'
-						});
+						toast.error('Error al eliminar maquila: ' + (data.error || 'No se pudo eliminar la maquila'));	
 					}
 				} catch (error) {
 					MySwal.fire({
@@ -407,10 +312,7 @@ const getState = ({ getStore, setStore }) => {
 							});
 							const data = await res.json();
 							if (res.ok) {
-								MySwal.fire({
-									icon: 'success',
-									title: 'Maquila actualizada'
-								});
+								toast.success('Maquila actualizada exitosamente');
 							
 								setStore({
 									maquilas: store.maquilas.map(m =>
@@ -419,11 +321,7 @@ const getState = ({ getStore, setStore }) => {
 								});
 								return data;
 							} else {
-								MySwal.fire({
-									icon: 'error',
-									title: 'Error al actualizar maquila',
-									text: data.error || 'No se pudo actualizar la maquila'
-								});
+								toast.error('Error al actualizar maquila: ' + (data.error || 'No se pudo actualizar la maquila'));
 								return null;
 							}
 						} catch (error) {

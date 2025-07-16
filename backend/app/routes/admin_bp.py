@@ -76,10 +76,10 @@ def get_token():
             }}), 200
 
         else:
-            return {"Error":"Contraseña  incorrecta"}
+            return jsonify({"Error":"Contraseña  incorrecta"}),401
     
     except Exception as e:
-        return {"Error":"El username proporcionado no corresponde a ninguno registrado: " + str(e)}, 500
+        return jsonify({"Error":"El username proporcionado no corresponde a ninguno registrado: " + str(e)}), 500
     
     
 
