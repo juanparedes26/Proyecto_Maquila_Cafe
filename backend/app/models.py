@@ -38,6 +38,7 @@ class Maquila(db.Model):
     detalle_precio = db.Column(db.String(255), nullable=True)
     observaciones = db.Column(db.String(255), nullable=True)
     cantidad_libras = db.Column(db.Float, nullable=True) 
+    precio_unitario_empaque = db.Column(db.Integer, nullable=True)
 
     cliente_id = db.Column(db.Integer, db.ForeignKey("clientes.id"))
     cliente = db.relationship("Cliente", back_populates="maquilas")

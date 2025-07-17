@@ -147,6 +147,7 @@ def create_maquila():
         detalle_precio = request.json.get('detalle_precio')
         observaciones = request.json.get('observaciones')
         cantidad_libras = request.json.get('cantidad_libras')
+        precio_unitario_empaque = request.json.get('precio_unitario_empaque')
 
         if not cliente_id or not peso_kg:
             return jsonify({'error': 'Cliente ID and Peso KG are required.'}), 400
@@ -162,7 +163,8 @@ def create_maquila():
             precio_total=precio_total,
             detalle_precio=detalle_precio,
             observaciones=observaciones,
-            cantidad_libras=cantidad_libras )
+            cantidad_libras=cantidad_libras,
+             precio_unitario_empaque=precio_unitario_empaque)
         
         db.session.add(new_maquila)
         db.session.commit()
@@ -183,6 +185,7 @@ def create_maquila():
             'nombre_cliente': new_maquila.cliente.nombre if new_maquila.cliente else None,
             'celular_cliente': new_maquila.cliente.celular if new_maquila.cliente else None,
             'cantidad_libras': new_maquila.cantidad_libras, 
+            'precio_unitario_empaque': new_maquila.precio_unitario_empaque
         }), 201
 
     except Exception as e:
@@ -215,7 +218,8 @@ def get_maquilas():
                 'precio_total': maquila.precio_total,
                 'detalle_precio': maquila.detalle_precio,
                 'observaciones': maquila.observaciones,
-                'cantidad_libras': maquila.cantidad_libras
+                'cantidad_libras': maquila.cantidad_libras,
+                'precio_unitario_empaque': maquila.precio_unitario_empaque
 
             }
             maquila_list.append(maquila_dict)
@@ -243,7 +247,8 @@ def get_maquila(maquila_id):
         'observaciones': maquila.observaciones,
         'nombre_cliente': maquila.cliente.nombre if maquila.cliente else None,
         'celular_cliente': maquila.cliente.celular if maquila.cliente else None,
-        'cantidad_libras': maquila.cantidad_libras
+        'cantidad_libras': maquila.cantidad_libras,
+        'precio_unitario_empaque': maquila.precio_unitario_empaque
     }
     return jsonify(maquila_dict), 200
     
@@ -276,6 +281,7 @@ def get_maquilas_by_cliente(cliente_id):
         'detalle_precio': m.detalle_precio,
         'observaciones': m.observaciones,
         'cantidad_libras': m.cantidad_libras,
+        'precio_unitario_empaque': m.precio_unitario_empaque,
     } for m in maquilas]
     return jsonify(maquila_list), 200
 
@@ -297,18 +303,73 @@ def delete_cliente(cliente_id):
     db.session.delete(cliente)
     db.session.commit()
     return jsonify({'message': 'Cliente eliminado'}), 200
-
+def format_cop(value):
+    try:
+        return "${:,.0f} COP".format(int(value))
+    except Exception:
+        return "$0 COP"
 @admin_bp.route("/maquilas/<int:maquila_id>", methods=["PUT"])
 @jwt_required()
 def update_maquila(maquila_id):
     maquila = Maquila.query.get_or_404(maquila_id)
-   
-    for field in ['peso_kg', 'esta_trillado', 'peso_despues_trilla_kg', 'grado_tostion', 'tipo_empaque', 'porcentaje_merma', 'precio_total', 'detalle_precio', 'observaciones', 'cantidad_libras']:
+
+    # Actualiza los campos recibidos
+    for field in [
+        'peso_kg', 'esta_trillado', 'peso_despues_trilla_kg', 'grado_tostion',
+        'tipo_empaque', 'porcentaje_merma', 'detalle_precio', 'observaciones',
+        'cantidad_libras', 'precio_unitario_empaque'
+    ]:
         value = request.json.get(field)
         if value is not None:
             setattr(maquila, field, value)
+
+    # --- CÁLCULO DE PRECIO ---
+    precio_total = 0
+    detalle = []
+
+    # Trilla
+    precio_trilla = 0
+    if not maquila.esta_trillado:
+        precio_trilla = (float(maquila.peso_kg) if maquila.peso_kg else 0) * 700
+        detalle.append(f"Trilla: {maquila.peso_kg}kg x $700 = ${int(precio_trilla)}")
+
+    # Empaque
+    if maquila.tipo_empaque and maquila.tipo_empaque.lower() in ["libras", "libra"]:
+        # Libras
+        cantidad_libras = int(maquila.cantidad_libras) if maquila.cantidad_libras else 0
+        precio_libras = cantidad_libras * 3000
+        detalle.append(f"Libras: {cantidad_libras} x $3000 = ${precio_libras}")
+
+        # Empaque (si se cobra)
+        precio_empaque = 0
+        if maquila.precio_unitario_empaque:
+            precio_empaque = cantidad_libras * int(maquila.precio_unitario_empaque)
+            detalle.append(f"Empaque: {cantidad_libras} x ${int(maquila.precio_unitario_empaque)} = ${precio_empaque}")
+
+        precio_total = precio_libras + precio_empaque + precio_trilla
+
+    elif maquila.tipo_empaque and maquila.tipo_empaque.lower() == "granel":
+        # Granel
+        if maquila.esta_trillado:
+            precio_granel = (float(maquila.peso_kg) if maquila.peso_kg else 0) * 3000
+            detalle.append(f"Granel trillado: {maquila.peso_kg}kg x $3000 = ${int(precio_granel)}")
+        else:
+            precio_granel = (float(maquila.peso_despues_trilla_kg) if maquila.peso_despues_trilla_kg else 0) * 3000
+            detalle.append(f"Granel sin trillar: {maquila.peso_despues_trilla_kg}kg x $3000 = ${int(precio_granel)}")
+        precio_total = precio_granel + precio_trilla
+
+
+    maquila.precio_total = int(precio_total)
+    maquila.detalle_precio = " | ".join(detalle)
+
     db.session.commit()
-    return jsonify({'message': 'Maquila actualizada'}), 200
+
+    return jsonify({
+        'message': 'Maquila actualizada',
+        'precio_total': maquila.precio_total,
+        'precio_total_str': format_cop(maquila.precio_total),
+        'detalle_precio': maquila.detalle_precio
+    }), 200
 
 @admin_bp.route("/maquilas/<int:maquila_id>", methods=["DELETE"])
 @jwt_required()

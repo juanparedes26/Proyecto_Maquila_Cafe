@@ -1,18 +1,21 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useParams,useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Context } from "../js/store/appContext.jsx";
 import { toast } from "react-toastify";
 import MaquilaFormModal from "../components/MaquilaFormModal.jsx";
 
 function PerfilCliente() {
   const { id } = useParams();
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const { store, actions } = useContext(Context);
   const [cliente, setCliente] = useState(null);
   const [maquilas, setMaquilas] = useState([]);
   const [showMaquilaModal, setShowMaquilaModal] = useState(false);
   const [editMaquila, setEditMaquila] = useState(null);
 
+  // Estados para controlar cuántas maquilas mostrar
+  const [showFinalizadas, setShowFinalizadas] = useState(5);
+  const [showEnProceso, setShowEnProceso] = useState(5);
 
   useEffect(() => {
     if (!store.token) {
@@ -24,135 +27,196 @@ function PerfilCliente() {
       const c = await actions.getClienteById(id);
       setCliente(c);
       const m = await actions.getMaquilabyCliente(id);
-      setMaquilas(m.slice(0, 5)); 
+      setMaquilas(m);
     };
     fetchData();
-  }, [id, actions]);
+  }, [id, actions, store.token, navigate]);
 
-    const handleAddMaquila = async (maquilaData) => {
-        const result = await actions.addMaquila( maquilaData);
-        if (result) {
-        toast.success("Maquila añadida correctamente");
-        setShowMaquilaModal(false);
-        setTimeout(() => actions.getMaquilabyCliente(id), 500);
-        } else {
-        toast.error("Error al añadir la maquila");
-        }
-    };
-    const handleEditMaquila = (maquila) => {
-  setEditMaquila(maquila);
-  setShowMaquilaModal(true);
-};
+  const handleAddMaquila = async (maquilaData) => {
+    const result = await actions.addMaquila(maquilaData);
+    if (result) {
+      toast.success("Maquila añadida correctamente");
+      setShowMaquilaModal(false);
+      const m = await actions.getMaquilabyCliente(id);
+      setMaquilas(m);
+    } else {
+      toast.error("Error al añadir la maquila");
+    }
+  };
 
-const handleSaveMaquila = async (maquilaData) => {
-  let result;
-  if (editMaquila) {
-    result = await actions.updateMaquila(editMaquila.id, maquilaData);
-  } else {
-    result = await actions.addMaquila(maquilaData);
-  }
-  if (result) {
-    toast.success(editMaquila ? "Maquila actualizada" : "Maquila añadida correctamente");
-    setShowMaquilaModal(false);
-    setEditMaquila(null);
-    const m = await actions.getMaquilabyCliente(id);
-    setMaquilas(m.slice(0, 5));
-  } else {
-    toast.error("Error al guardar la maquila");
-  }
-};
-  
-  
+  const handleEditMaquila = (maquila) => {
+    setEditMaquila(maquila);
+    setShowMaquilaModal(true);
+  };
 
+  const handleSaveMaquila = async (maquilaData) => {
+    let result;
+    if (editMaquila) {
+      result = await actions.updateMaquila(editMaquila.id, maquilaData);
+    } else {
+      result = await actions.addMaquila(maquilaData);
+    }
+    if (result) {
+      toast.success(editMaquila ? "Maquila actualizada" : "Maquila añadida correctamente");
+      setShowMaquilaModal(false);
+      setEditMaquila(null);
+      const m = await actions.getMaquilabyCliente(id);
+      setMaquilas(m);
+    } else {
+      toast.error("Error al guardar la maquila");
+    }
+  };
 
+  // Ordena por fecha descendente (más reciente primero)
+  const maquilasOrdenadas = [...maquilas].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+  const finalizadasAll = maquilasOrdenadas.filter(m => m.precio_total && m.precio_total > 0);
+  const enProcesoAll = maquilasOrdenadas.filter(m => !m.precio_total || m.precio_total === 0);
+
+  // Solo muestra las primeras N, según el estado
+  const finalizadas = finalizadasAll.slice(0, showFinalizadas);
+  const enProceso = enProcesoAll.slice(0, showEnProceso);
 
   return (
     <div className="container py-4">
-      
       {cliente && (
         <>
           <h1 style={{ color: "#6f4e37", fontWeight: "bold" }}>{cliente.nombre}</h1>
           <h4 style={{ color: "#4b2e19" }}>{cliente.celular}</h4>
           <div className="d-flex align-items-center gap-3 mb-3">
-                
-            <button className="btn btn-success" onClick={() => setShowMaquilaModal(true)}>Añadir Maquila</button>
-                <button
-                    className="btn btn-secondary"
-                    onClick={() => navigate(-1)}
-                >
-                    Volver
+            <button className="btn btn-success" onClick={() => { setShowMaquilaModal(true); setEditMaquila(null); }}>Añadir Maquila</button>
+            <button
+              className="btn btn-secondary"
+              onClick={() => navigate(-1)}
+            >
+              Volver
+            </button>
+          </div>
+
+          <h5 className="mt-4">Maquilas en proceso</h5>
+          <div className="table-responsive">
+            <table className="table align-middle">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Peso (kg)</th>
+                  <th>¿Trillado?</th>
+                  <th>Peso después de trilla</th>
+                  <th>Grado de tostión</th>
+                  <th>Tipo de empaque</th>
+                  <th>Cant. libras</th>
+                  <th>Observaciones</th>
+                  <th>Estado</th>
+                  <th>Precio</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {enProceso.map(maquila => (
+                  <tr key={maquila.id}>
+                    <td>{maquila.fecha}</td>
+                    <td>{maquila.peso_kg}</td>
+                    <td>{maquila.esta_trillado ? "Sí" : "No"}</td>
+                    <td>{maquila.peso_despues_trilla_kg || "-"}</td>
+                    <td>{maquila.grado_tostion}</td>
+                    <td>{maquila.tipo_empaque}</td>
+                    <td>{maquila.cantidad_libras || "-"}</td>
+                    <td>{maquila.observaciones || "-"}</td>
+                    <td>
+                      <span className="badge bg-warning text-dark">
+                        <i className="bi bi-hourglass-split"></i> En proceso
+                      </span>
+                    </td>
+                    <td>
+                      <i className="bi bi-hourglass-split"></i>
+                    </td>
+                    <td>
+                      <button
+                        className="btn btn-warning btn-sm"
+                        onClick={() => handleEditMaquila(maquila)}
+                      >
+                        Editar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {enProcesoAll.length > showEnProceso && (
+              <div className="text-center mb-3">
+                <button className="btn btn-link" onClick={() => setShowEnProceso(showEnProceso + 5)}>
+                  Ver más en proceso
                 </button>
-            </div>
+              </div>
+            )}
+          </div>
 
-            <h5 className="mt-4">Historial de Maquilas</h5>
-                    <div className="table-responsive">
-                    <table className="table align-middle">
-                        <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Peso (kg)</th>
-                            <th>¿Trillado?</th>
-                            <th>Peso después de trilla</th>
-                            <th>Grado de tostión</th>
-                            <th>Tipo de empaque</th>
-                            <th>Cant. libras</th>
-                            <th>Observaciones</th>
-                            <th>Estado</th>
-                            <th>Precio</th>
-                        </tr>
-                        </thead>
-                     <tbody>
-                        {maquilas.map(maquila => (
-                            <tr key={maquila.id}>
-                            <td>{maquila.fecha}</td>
-                            <td>{maquila.peso_kg}</td>
-                            <td>{maquila.esta_trillado ? "Sí" : "No"}</td>
-                            <td>{maquila.peso_despues_trilla_kg || "-"}</td>
-                            <td>{maquila.grado_tostion}</td>
-                            <td>{maquila.tipo_empaque}</td>
-                            <td>{maquila.cantidad_libras || "-"}</td>
-                            <td>{maquila.observaciones || "-"}</td>
-                            <td>
-                                {maquila.precio_total
-                                ? <span className="badge bg-success">Finalizado</span>
-                                : <span className="badge bg-warning text-dark"><i className="bi bi-hourglass-split"></i> En proceso</span>
-                                }
-                            </td>
-                            <td>
-                                {maquila.precio_total
-                                ? `$${maquila.precio_total}`
-                                : <i className="bi bi-hourglass-split"></i>
-                                }
-                            </td>
-                            <td>
-                                <button
-                                className="btn btn-warning btn-sm"
-                                onClick={() => handleEditMaquila(maquila)}
-                                >
-                                Editar
-                                </button>
-                            </td>
-                            </tr>
-                        ))}
-                        </tbody>
+          <h5 className="mt-4">Maquilas finalizadas</h5>
+          <div className="table-responsive">
+            <table className="table align-middle">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Peso (kg)</th>
+                  <th>¿Trillado?</th>
+                  <th>Peso después de trilla</th>
+                  <th>Grado de tostión</th>
+                  <th>Tipo de empaque</th>
+                  <th>Cant. libras</th>
+                  <th>Observaciones</th>
+                  <th>Estado</th>
+                  <th>Precio</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {finalizadas.map(maquila => (
+                  <tr key={maquila.id}>
+                    <td>{maquila.fecha}</td>
+                    <td>{maquila.peso_kg}</td>
+                    <td>{maquila.esta_trillado ? "Sí" : "No"}</td>
+                    <td>{maquila.peso_despues_trilla_kg || "-"}</td>
+                    <td>{maquila.grado_tostion}</td>
+                    <td>{maquila.tipo_empaque}</td>
+                    <td>{maquila.cantidad_libras || "-"}</td>
+                    <td>{maquila.observaciones || "-"}</td>
+                    <td>
+                      <span className="badge bg-success">Finalizado</span>
+                    </td>
+                    <td>
+                      {maquila.precio_total_str || `$${maquila.precio_total}`}
+                    </td>
+                    <td>
+                      <button
+                        className="btn btn-warning btn-sm"
+                        onClick={() => handleEditMaquila(maquila)}
+                      >
+                        Editar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {finalizadasAll.length > showFinalizadas && (
+              <div className="text-center mb-3">
+                <button className="btn btn-link" onClick={() => setShowFinalizadas(showFinalizadas + 5)}>
+                  Ver más finalizadas
+                </button>
+              </div>
+            )}
+          </div>
 
-                    </table>
-            </div>
-
-            <MaquilaFormModal
-                show={showMaquilaModal}
-                onClose={() => { setShowMaquilaModal(false); setEditMaquila(null); }}
-                onSubmit={handleSaveMaquila}
-                cliente={cliente}
-                maquila={editMaquila}
-    />
-
-
+          <MaquilaFormModal
+            show={showMaquilaModal}
+            onClose={() => { setShowMaquilaModal(false); setEditMaquila(null); }}
+            onSubmit={handleSaveMaquila}
+            cliente={cliente}
+            maquila={editMaquila}
+          />
         </>
       )}
     </div>
   );
-  }
-
+}
 
 export default PerfilCliente;

@@ -1,6 +1,5 @@
-import React, { useState ,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-
 
 function MaquilaFormModal({ show, onClose, onSubmit, cliente, maquila }) {
   const [peso_kg, setPesoKg] = useState("");
@@ -10,6 +9,8 @@ function MaquilaFormModal({ show, onClose, onSubmit, cliente, maquila }) {
   const [observaciones, setObservaciones] = useState("");
   const [cantidad_libras, setCantidadLibras] = useState("");
   const [peso_despues_trilla_kg, setPesoDespuesTrillaKg] = useState("");
+  const [cobra_empaque, setCobraEmpaque] = useState(false);
+  const [precio_unitario_empaque, setPrecioUnitarioEmpaque] = useState("");
 
   useEffect(() => {
     if (maquila) {
@@ -20,6 +21,8 @@ function MaquilaFormModal({ show, onClose, onSubmit, cliente, maquila }) {
       setObservaciones(maquila.observaciones || "");
       setCantidadLibras(maquila.cantidad_libras || "");
       setPesoDespuesTrillaKg(maquila.peso_despues_trilla_kg || "");
+      setCobraEmpaque(!!maquila.precio_unitario_empaque);
+      setPrecioUnitarioEmpaque(maquila.precio_unitario_empaque || "");
     } else {
       setPesoKg("");
       setEstaTrillado(false);
@@ -28,6 +31,8 @@ function MaquilaFormModal({ show, onClose, onSubmit, cliente, maquila }) {
       setObservaciones("");
       setCantidadLibras("");
       setPesoDespuesTrillaKg("");
+      setCobraEmpaque(false);
+      setPrecioUnitarioEmpaque("");
     }
   }, [maquila, show]);
 
@@ -45,16 +50,17 @@ function MaquilaFormModal({ show, onClose, onSubmit, cliente, maquila }) {
       tipo_empaque,
       observaciones
     };
-    // Si no está trillado, agregar peso después de trilla
     if (!esta_trillado && peso_despues_trilla_kg) {
       maquilaData.peso_despues_trilla_kg = peso_despues_trilla_kg;
     }
-    // Si el tipo de empaque es libras y se ingresó cantidad, la agregamos
     if (
       (tipo_empaque.toLowerCase() === "libras" || tipo_empaque.toLowerCase() === "libra") &&
       cantidad_libras
     ) {
       maquilaData.cantidad_libras = cantidad_libras;
+      if (cobra_empaque && precio_unitario_empaque) {
+        maquilaData.precio_unitario_empaque = precio_unitario_empaque;
+      }
     }
     await onSubmit(maquilaData);
     setPesoKg("");
@@ -64,6 +70,8 @@ function MaquilaFormModal({ show, onClose, onSubmit, cliente, maquila }) {
     setObservaciones("");
     setCantidadLibras("");
     setPesoDespuesTrillaKg("");
+    setCobraEmpaque(false);
+    setPrecioUnitarioEmpaque("");
     onClose();
   };
 
@@ -97,7 +105,6 @@ function MaquilaFormModal({ show, onClose, onSubmit, cliente, maquila }) {
                 />
                 <label className="form-check-label" htmlFor="trillado">¿Está trillado?</label>
               </div>
-              {/* Si NO está trillado, muestra el input de peso después de trilla */}
               {!esta_trillado && (
                 <input
                   type="number"
@@ -123,15 +130,37 @@ function MaquilaFormModal({ show, onClose, onSubmit, cliente, maquila }) {
                 onChange={e => setTipoEmpaque(e.target.value)}
                 required
               />
-              {/* Solo muestra el campo si el tipo de empaque es libras */}
               {(tipo_empaque.toLowerCase() === "libras" || tipo_empaque.toLowerCase() === "libra") && (
-                <input
-                  type="number"
-                  className="form-control mb-2"
-                  placeholder="Cantidad de libras"
-                  value={cantidad_libras}
-                  onChange={e => setCantidadLibras(e.target.value)}
-                />
+                <>
+                  <input
+                    type="number"
+                    className="form-control mb-2"
+                    placeholder="Cantidad de libras"
+                    value={cantidad_libras}
+                    onChange={e => setCantidadLibras(e.target.value)}
+                  />
+                  <div className="form-check mb-2">
+                    <input
+                      type="checkbox"
+                      className="form-check-input"
+                      id="cobraEmpaque"
+                      checked={cobra_empaque}
+                      onChange={e => setCobraEmpaque(e.target.checked)}
+                    />
+                    <label className="form-check-label" htmlFor="cobraEmpaque">
+                      ¿Se cobra el empaque?
+                    </label>
+                  </div>
+                  {cobra_empaque && (
+                    <input
+                      type="number"
+                      className="form-control mb-2"
+                      placeholder="Precio unitario del empaque"
+                      value={precio_unitario_empaque}
+                      onChange={e => setPrecioUnitarioEmpaque(e.target.value)}
+                    />
+                  )}
+                </>
               )}
               <textarea
                 className="form-control mb-2"
