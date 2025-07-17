@@ -23,10 +23,11 @@ class MaquilaAdmin(ModelView):
         'porcentaje_merma',
         'precio_total',
         'detalle_precio',
-        'observaciones'
+        'observaciones',
+        'cantidad_libras'
     ) 
     
-  # Oculta 'password' en el formulario
+
 
 def register_admin_views(admin, db):
     admin.add_view(UserAdmin(User, db.session))

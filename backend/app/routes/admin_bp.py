@@ -146,6 +146,7 @@ def create_maquila():
         precio_total = request.json.get('precio_total')
         detalle_precio = request.json.get('detalle_precio')
         observaciones = request.json.get('observaciones')
+        cantidad_libras = request.json.get('cantidad_libras')
 
         if not cliente_id or not peso_kg:
             return jsonify({'error': 'Cliente ID and Peso KG are required.'}), 400
@@ -160,8 +161,8 @@ def create_maquila():
             porcentaje_merma=porcentaje_merma,
             precio_total=precio_total,
             detalle_precio=detalle_precio,
-            observaciones=observaciones
-        )
+            observaciones=observaciones,
+            cantidad_libras=cantidad_libras )
         
         db.session.add(new_maquila)
         db.session.commit()
@@ -181,6 +182,7 @@ def create_maquila():
             'observaciones': new_maquila.observaciones,
             'nombre_cliente': new_maquila.cliente.nombre if new_maquila.cliente else None,
             'celular_cliente': new_maquila.cliente.celular if new_maquila.cliente else None,
+            'cantidad_libras': new_maquila.cantidad_libras, 
         }), 201
 
     except Exception as e:
@@ -212,7 +214,9 @@ def get_maquilas():
                 'porcentaje_merma': maquila.porcentaje_merma,
                 'precio_total': maquila.precio_total,
                 'detalle_precio': maquila.detalle_precio,
-                'observaciones': maquila.observaciones
+                'observaciones': maquila.observaciones,
+                'cantidad_libras': maquila.cantidad_libras
+
             }
             maquila_list.append(maquila_dict)
         return jsonify(maquila_list), 200
@@ -239,6 +243,7 @@ def get_maquila(maquila_id):
         'observaciones': maquila.observaciones,
         'nombre_cliente': maquila.cliente.nombre if maquila.cliente else None,
         'celular_cliente': maquila.cliente.celular if maquila.cliente else None,
+        'cantidad_libras': maquila.cantidad_libras
     }
     return jsonify(maquila_dict), 200
     
@@ -269,7 +274,8 @@ def get_maquilas_by_cliente(cliente_id):
         'porcentaje_merma': m.porcentaje_merma,
         'precio_total': m.precio_total,
         'detalle_precio': m.detalle_precio,
-        'observaciones': m.observaciones
+        'observaciones': m.observaciones,
+        'cantidad_libras': m.cantidad_libras,
     } for m in maquilas]
     return jsonify(maquila_list), 200
 
@@ -297,7 +303,7 @@ def delete_cliente(cliente_id):
 def update_maquila(maquila_id):
     maquila = Maquila.query.get_or_404(maquila_id)
    
-    for field in ['peso_kg', 'esta_trillado', 'peso_despues_trilla_kg', 'grado_tostion', 'tipo_empaque', 'porcentaje_merma', 'precio_total', 'detalle_precio', 'observaciones']:
+    for field in ['peso_kg', 'esta_trillado', 'peso_despues_trilla_kg', 'grado_tostion', 'tipo_empaque', 'porcentaje_merma', 'precio_total', 'detalle_precio', 'observaciones', 'cantidad_libras']:
         value = request.json.get(field)
         if value is not None:
             setattr(maquila, field, value)

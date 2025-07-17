@@ -10,7 +10,8 @@ import Navbar from './components/Navbar.jsx';
 import Footer from './components/Footer.jsx';
 import Login from './views/Login.jsx';
 import  Clientes from './views/Clientes.jsx';
-
+import PerfilCliente from './views/PerfilCliente.jsx';
+import MaquilaFormModal from './components/MaquilaFormModal.jsx'; // Importa el modal de maquila
 const Layout = () => {
     const basename = import.meta.env.VITE_BASENAME || "";
     return (
@@ -23,6 +24,8 @@ const Layout = () => {
                         <Route exact path='/' element={<Home />} />
                         <Route path='/login' element={<Login />} />
                         <Route path='/clientes' element={<Clientes />} />
+                        <Route path='/perfil-cliente/:id' element={<PerfilCliente />} />
+                        <Route path='/maquila-form' element={<MaquilaFormModal />} />
                         {/* Puedes agregar más rutas aquí */}
                   
                     </Routes>

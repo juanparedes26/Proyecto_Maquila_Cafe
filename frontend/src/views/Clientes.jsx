@@ -4,9 +4,11 @@ import { toast } from "react-toastify";
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 const MySwal = withReactContent(Swal);
+import { useNavigate } from "react-router-dom";
 
 
 function Clientes() {
+  const navigate = useNavigate();
   const { store, actions } = useContext(Context);
   const [nombre, setNombre] = useState("");
   const [celular, setCelular] = useState("");
@@ -177,7 +179,13 @@ const handleUpdateCliente = async (e) => {
                     <td style={{ color: "#4b2e19" }}>{cliente.celular}</td>
                     <td>
                     <button className="btn btn-sm me-2" style={{ background: "#c0a16b", color: "#fffbe7", fontWeight: "bold" }} onClick={() => startEditCliente(cliente)}>Editar</button>
-                    <button className="btn btn-sm me-2" style={{ background: "#6f4e37", color: "#fffbe7", fontWeight: "bold" }}>Añadir Maquila</button>
+                    <button
+                        className="btn btn-sm me-2"
+                        style={{ background: "#6f4e37", color: "#fffbe7", fontWeight: "bold" }}
+                        onClick={() => navigate(`/perfil-cliente/${cliente.id}`)}
+                        >
+                        Ver más
+                    </button>
                     <button className="btn btn-sm"   onClick={() => handleDeleteCliente(cliente.id)} style={{ background: "#b94a48", color: "#fffbe7", fontWeight: "bold" }}>Eliminar</button>
                     </td>
                 </tr>

@@ -162,9 +162,11 @@ const getState = ({ getStore, setStore }) => {
 					const data = await res.json();
 					if (res.ok) {
 						setStore({ maquilas: [...store.maquilas, data] });
-						toast.error('Maquila agregada exitosamente');
+
+						return true;
 					} else {
 						 toast.error('Error al agregar maquila: ' + (data.error || 'No se pudo agregar la maquila'));
+						return false;
 					}
 				} catch (error) {
 					MySwal.fire({
@@ -307,14 +309,15 @@ const getState = ({ getStore, setStore }) => {
 							});
 							const data = await res.json();
 							if (res.ok) {
-								toast.success('Maquila actualizada exitosamente');
 							
+								
 								setStore({
 									maquilas: store.maquilas.map(m =>
 										m.id === maquilaId ? { ...m, ...datos } : m
 									)
 								});
 								return data;
+								
 							} else {
 								toast.error('Error al actualizar maquila: ' + (data.error || 'No se pudo actualizar la maquila'));
 								return null;
