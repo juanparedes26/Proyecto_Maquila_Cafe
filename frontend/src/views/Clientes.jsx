@@ -6,7 +6,6 @@ import Swal from 'sweetalert2';
 const MySwal = withReactContent(Swal);
 import { useNavigate } from "react-router-dom";
 
-
 function Clientes() {
   const navigate = useNavigate();
   const { store, actions } = useContext(Context);
@@ -16,6 +15,7 @@ function Clientes() {
   const [editId, setEditId] = useState(null);
   const [editNombre, setEditNombre] = useState("");
   const [editCelular, setEditCelular] = useState("");
+  const [clientes, setClientes] = useState([]);
 
   useEffect(() => {
     if (store.token && typeof store.token === "string" && store.token.length > 0) {
@@ -24,6 +24,11 @@ function Clientes() {
       toast.error("Debes iniciar sesión para ver los clientes");
     }
   }, [store.token]);
+
+  // Sincroniza el estado local con el store
+  useEffect(() => {
+    setClientes(store.clientes);
+  }, [store.clientes]);
 
   const handleAddCliente = async (e) => {
     e.preventDefault();
@@ -37,49 +42,44 @@ function Clientes() {
     }
   };
 
-const handleDeleteCliente = async (clienteId) => {
-  MySwal.fire({
-    title: '¿Seguro que deseas eliminar este cliente?',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#b94a48',
-    cancelButtonColor: '#6f4e37',
-    confirmButtonText: 'Sí, eliminar',
-    cancelButtonText: 'Cancelar'
-  }).then(async (result) => {
-    if (result.isConfirmed) {
-      await actions.deleteCliente(clienteId);
+  const handleDeleteCliente = async (clienteId) => {
+    MySwal.fire({
+      title: '¿Seguro que deseas eliminar este cliente?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#b94a48',
+      cancelButtonColor: '#6f4e37',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await actions.deleteCliente(clienteId);
+        setTimeout(() => actions.getClientes(), 500);
+      }
+    });
+  };
+
+  const startEditCliente = (cliente) => {
+    setEditId(cliente.id);
+    setEditNombre(cliente.nombre);
+    setEditCelular(cliente.celular);
+  };
+
+  const handleUpdateCliente = async (e) => {
+    e.preventDefault();
+    const result = await actions.updateCliente(editId, { nombre: editNombre, celular: editCelular });
+    if (result) {
+      setEditId(null);
+      setEditNombre("");
+      setEditCelular("");
       setTimeout(() => actions.getClientes(), 500);
+    } else {
+      toast.error("No se pudo actualizar el cliente");
     }
-  });
-};
-const startEditCliente = (cliente) => {
-  setEditId(cliente.id);
-  setEditNombre(cliente.nombre);
-  setEditCelular(cliente.celular);
-};
+  };
 
-const handleUpdateCliente = async (e) => {
-  e.preventDefault();
-  const result = await actions.updateCliente(editId, { nombre: editNombre, celular: editCelular });
-  if (result) {
-
-    setEditId(null);
-    setEditNombre("");
-    setEditCelular("");
-    setTimeout(() => actions.getClientes(), 500);
-  } else {
-    toast.error("No se pudo actualizar el cliente");
-  }
-};
-
-
-
-
-
-
-
-  const clientesFiltrados = store.clientes
+  // Usar el estado local para filtrar y mostrar clientes
+  const clientesFiltrados = clientes
     .filter(cliente =>
       cliente.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
       cliente.celular.includes(busqueda)
@@ -148,53 +148,53 @@ const handleUpdateCliente = async (e) => {
             </tr>
           </thead>
           <tbody>
-         {clientesFiltrados.length > 0 ? (
-            clientesFiltrados.map(cliente =>
+            {clientesFiltrados.length > 0 ? (
+              clientesFiltrados.map(cliente =>
                 editId === cliente.id ? (
-                <tr key={cliente.id} style={{ background: "#f7ecd7" }}>
+                  <tr key={cliente.id} style={{ background: "#f7ecd7" }}>
                     <td>
-                    <input
+                      <input
                         type="text"
                         value={editNombre}
                         onChange={e => setEditNombre(e.target.value)}
                         className="form-control"
-                    />
+                      />
                     </td>
                     <td>
-                    <input
+                      <input
                         type="number"
                         value={editCelular}
                         onChange={e => setEditCelular(e.target.value)}
                         className="form-control"
-                    />
+                      />
                     </td>
                     <td>
-                    <button className="btn btn-sm me-2" style={{ background: "#6f4e37", color: "#fffbe7", fontWeight: "bold" }} onClick={handleUpdateCliente}>Guardar</button>
-                    <button className="btn btn-sm" style={{ background: "#b94a48", color: "#fffbe7", fontWeight: "bold" }} onClick={() => setEditId(null)}>Cancelar</button>
+                      <button className="btn btn-sm me-2" style={{ background: "#6f4e37", color: "#fffbe7", fontWeight: "bold" }} onClick={handleUpdateCliente}>Guardar</button>
+                      <button className="btn btn-sm" style={{ background: "#b94a48", color: "#fffbe7", fontWeight: "bold" }} onClick={() => setEditId(null)}>Cancelar</button>
                     </td>
-                </tr>
+                  </tr>
                 ) : (
-                <tr key={cliente.id} style={{ background: "#f7ecd7" }}>
+                  <tr key={cliente.id} style={{ background: "#f7ecd7" }}>
                     <td style={{ color: "#4b2e19", fontWeight: "bold" }}>{cliente.nombre}</td>
                     <td style={{ color: "#4b2e19" }}>{cliente.celular}</td>
                     <td>
-                    <button className="btn btn-sm me-2" style={{ background: "#c0a16b", color: "#fffbe7", fontWeight: "bold" }} onClick={() => startEditCliente(cliente)}>Editar</button>
-                    <button
+                      <button className="btn btn-sm me-2" style={{ background: "#c0a16b", color: "#fffbe7", fontWeight: "bold" }} onClick={() => startEditCliente(cliente)}>Editar</button>
+                      <button
                         className="btn btn-sm me-2"
                         style={{ background: "#6f4e37", color: "#fffbe7", fontWeight: "bold" }}
                         onClick={() => navigate(`/perfil-cliente/${cliente.id}`)}
-                        >
+                      >
                         Ver más
-                    </button>
-                    <button className="btn btn-sm"   onClick={() => handleDeleteCliente(cliente.id)} style={{ background: "#b94a48", color: "#fffbe7", fontWeight: "bold" }}>Eliminar</button>
+                      </button>
+                      <button className="btn btn-sm" onClick={() => handleDeleteCliente(cliente.id)} style={{ background: "#b94a48", color: "#fffbe7", fontWeight: "bold" }}>Eliminar</button>
                     </td>
-                </tr>
+                  </tr>
                 )
-            )
+              )
             ) : (
-            <tr>
+              <tr>
                 <td colSpan={3} className="text-center" style={{ color: "#6f4e37", background: "#f7ecd7" }}>No hay clientes registrados.</td>
-            </tr>
+              </tr>
             )}
           </tbody>
         </table>
