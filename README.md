@@ -1,152 +1,63 @@
-# 🚀 Fullstack Flask + React (Vite) — Guía de Inicio Rápido
+# Proyecto Maquila Café - Beta v1
 
-![Flask](https://img.shields.io/badge/Flask-000?logo=flask&logoColor=white)
-![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)
-![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=FFD62E)
-![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
+## ¿Qué es este proyecto?
 
----
+**Proyecto Maquila Café** es una aplicación web que desarrollé para ayudar a mi papá en la gestión de maquilas de café.  
+Él llevaba todo el registro de maquilas, clientes y cálculos de precios de forma manual, usando libretas y hojas de papel.  
+Vi la oportunidad de facilitarle el trabajo y digitalizar el proceso, creando una herramienta sencilla y eficiente.
 
-Este proyecto es una aplicación fullstack que utiliza Flask para el backend y React (con Vite) para el frontend. Puedes iniciar ambos proyectos por separado en modo desarrollo o usar Docker Compose para levantar todo el stack.
+## ¿Por qué lo hice?
 
-## 🛠️ Requisitos previos
+Mi papá es caficultor y administra el proceso de maquila para varios clientes:  
+- Recibe café de diferentes personas.
+- Lleva el control de trilla, tostión, empaque y entrega.
+- Calcula precios y cantidades manualmente.
 
-- 🐍 Python 3.11+
-- 🟦 Node.js 18+ y npm
-- 🐳 (Opcional) Docker y Docker Compose
+Esto le tomaba mucho tiempo y era fácil cometer errores o perder información.  
+Quise ayudarlo con una solución digital que le permitiera:
+- Registrar clientes y maquilas de forma rápida.
+- Calcular precios automáticamente según reglas del negocio.
+- Tener toda la información organizada y accesible desde cualquier dispositivo.
 
----
+## ¿Qué hace la app?
 
-## 📦 1. Clonar el repositorio
+- **Gestión de clientes:** Alta y edición de clientes con sus datos.
+- **Registro de maquilas:** Cada cliente puede tener varias maquilas, con detalles como peso, grado de tostión, tipo de empaque, cantidad de libras, observaciones, etc.
+- **Cálculo automático de precios:** El sistema calcula el precio total de cada maquila y lo muestra de forma clara.
+- **Separación visual:** Las maquilas se muestran en dos apartados: "En proceso" y "Finalizadas", ordenadas por fecha (las más recientes primero).
+- **Botón "Ver más":** Si hay muchas maquilas, puedes ver más registros en cada apartado.
+- **Edición y actualización:** Puedes editar maquilas y los cambios se reflejan automáticamente.
 
-```bash
-git clone https://github.com/tu-usuario/tu-repo.git
-cd tu-repo
-```
+## Tecnologías
 
----
+- **Frontend:** React + Bootstrap
+- **Backend:** Flask + SQLAlchemy
+- **Autenticación:** JWT
+- **Notificaciones:** React Toastify
 
-## 🐍 2. Inicializar el Backend (Flask)
-
-1. Crear y activar un entorno virtual (recomendado):
-
-   **Windows:**
-   ```bash
-   python -m venv venv
-   venv\Scripts\activate
-   ```
-   **Linux/Mac:**
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
-
-2. Instalar las dependencias:
-
-   ```bash
-   pip install -r backend/requirements.txt
-   ```
-
-3. Iniciar el backend:
-
-   ```bash
-   cd backend/
-   python -m app.run
-   ```
-
-   El backend estará disponible en: [http://localhost:5100](http://localhost:5100)
-
----
-
-## ⚛️ 3. Inicializar el Frontend (React + Vite)
-
-1. Entrar a la carpeta del frontend:
-
-   ```bash
-   cd frontend
-   ```
-
-2. Instalar dependencias:
-
-   ```bash
-   npm install
-   ```
-
-3. Iniciar el frontend:
-
-   ```bash
-   npm run dev
-   ```
-
-   El frontend estará disponible en: [http://localhost:5173](http://localhost:5173)
-
----
-
-## 🔑 4. Variables de entorno
-
-Asegúrate de tener los archivos `.env` necesarios en cada carpeta (`backend` y `frontend`). Puedes usar los archivos `.env.example` como guía para crear tu propio `.env`, o simplemente renombrarlos a `.env` en cada carpeta.
-
-📋 **Ejemplo:**
-
-### backend/.env
-```
-FLASK_APP=app/run.py
-FLASK_ENV=development
-SECRET_KEY=your-secret-key-here
-DATABASE_URL=sqlite:///app.db
-```
-
-### frontend/.env
-```
-VITE_BACKEND_URL=http://localhost:5100
-VITE_BASENAME=/
-```
-
----
-
-## 🐳 5. (Opcional) Usar Docker Compose
-
-Si prefieres levantar todo con Docker Compose:
+## Instalación rápida
 
 ```bash
-docker-compose up --build
+git clone https://github.com/tuusuario/proyecto-maquila.git
+cd proyecto-maquila
+# Backend
+cd backend
+pip install -r requirements.txt
+flask run
+# Frontend
+cd ../frontend
+npm install
+npm start
 ```
 
-Esto levantará el backend en `localhost:5100` y el frontend en `localhost:5173`.
+## Estado actual
+
+- **Versión Beta:** Funcionalidad principal lista para pruebas familiares.
+- **Pendiente:** Mejoras visuales, exportación de datos, soporte para maquilas mixtas.
 
 ---
 
-## 🗂️ 6. Estructura del proyecto
+**Este proyecto es especial para mí porque nació de una necesidad real en mi familia.  
+Si te interesa, quieres probarlo o tienes sugerencias, puedes contactarme por LinkedIn.**
 
-```
-backend/
-  app/
-    app.py
-    ...
-  requirements.txt
-frontend/
-  src/
-    ...
-  package.json
-  ...
-docker-compose.yml
-README.md
-```
-
----
-
-## 💡 7. Notas
-- ⚠️ Si tienes problemas de CORS, asegúrate de que el backend tenga habilitado CORS.
-- 🔄 Si cambias las variables de entorno, reinicia el servidor correspondiente.
-- 🚀 Para producción, considera construir el frontend (`npm run build`) y servir los archivos estáticos con un servidor web.
-
----
-
-🎉 ¡Listo! Ahora puedes desarrollar y probar tu aplicación fullstack Flask + React.
-
----
-
-<p align="center" style="font-size:1.2em;">
-  <b>✨ Hecho con ❤️ por Fede</b> <br/>
-  <sub>Con una mención especial a <b>[David Cunha](https://www.youtube.com/telodigoencodigo)</b> 🙌</sub>
-</p>
+Desarrollado por [Tu Nombre](https://www.linkedin.com/in/tuusuario/)
