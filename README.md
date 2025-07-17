@@ -30,16 +30,15 @@ Haber construido esto solo, desde cero, como mi primer proyecto fullstack comple
 - **Autenticación:** JWT
 - **Notificaciones:** React Toastify
 - **Diseño base:** Inspirado en un layout de [Federico Serron](https://www.linkedin.com/in/serron-federico/)
-- 🚀 Estado actual
+  
+🚀 Estado actual
 Este proyecto ya es completamente funcional para el uso que mi papá necesitaba.
 ✅ Puede crear clientes, registrar maquilas, calcular precios automáticamente, editar maquilas existentes y filtrar maquilas entre "En proceso" y "Finalizadas".
 🔒 El sistema es de acceso privado.
 📌 Próximamente incluiré funciones como:
+-**Mejorar el diseño para hacerlo aún más intuitivo.
+-**Generar reportes mensuales
 
-
-
-Mejorar el diseño para hacerlo aún más intuitivo.
-Generar reportes mensuales
 
 ❤️ ¿Por qué es especial para mí?
 No es solo un ejercicio de código.
