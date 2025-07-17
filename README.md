@@ -30,6 +30,42 @@ Haber construido esto solo, desde cero, como mi primer proyecto fullstack comple
 - **Autenticación:** JWT
 - **Notificaciones:** React Toastify
 - **Diseño base:** Inspirado en un layout de [Federico Serron](https://www.linkedin.com/in/serron-federico/)
+- 🚀 Estado actual
+Este proyecto ya es completamente funcional para el uso que mi papá necesitaba.
+✅ Puede crear clientes, registrar maquilas, calcular precios automáticamente, editar maquilas existentes y filtrar maquilas entre "En proceso" y "Finalizadas".
+🔒 El sistema es de acceso privado.
+📌 Próximamente incluiré funciones como:
+
+
+
+Mejorar el diseño para hacerlo aún más intuitivo.
+Generar reportes mensuales
+
+❤️ ¿Por qué es especial para mí?
+No es solo un ejercicio de código.
+Es una herramienta real que está ayudando a mi familia.
+Me permitió entender lo importante que es construir software útil, hecho a medida, que resuelva problemas reales.
+
+Más allá del código, esto es una forma de aportar a lo que siempre he visto en casa:
+el trabajo, el café, el esfuerzo diario.
+
+☕️ Este fue mi primer proyecto fullstack hecho totalmente por mí, y siempre va a tener un lugar especial en mi camino como desarrollador.
+
+👨‍💻 Sobre mí
+Soy Juan Manuel Paredes López, desarrollador Fullstack Junior e Ingeniero Mecatrónico.
+Este proyecto representa mi paso de estudiante a creador: no solo aprendí nuevas tecnologías, sino que desarrollé la confianza de construir algo completo y útil por mi cuenta.
+
+📎 Conéctate conmigo en LinkedIn www.linkedin.com/in/juan-manuel-paredes-lopez-b7621224b
+
+📁 Repositorio
+Este proyecto es público con fines de portafolio.
+🔐 Está protegido: no tiene funciones de edición externas ni usuarios múltiples.
+⚠️ Aún no está listo para producción comercial, pero es una base sólida y real de lo que sé hacer.
+
+💬 Cualquier comentario o sugerencia será bienvenida.
+
+Gracias por leer y por llegar hasta aquí 🙌
+
 
 ## Instalación rápida
 
@@ -46,39 +82,5 @@ flask run
 cd ../frontend
 npm install
 npm start
-🚀 Estado actual
-Este proyecto ya es completamente funcional para el uso que mi papá necesitaba.
-✅ Puede crear clientes, registrar maquilas, calcular precios automáticamente, editar maquilas existentes y filtrar maquilas entre "En proceso" y "Finalizadas".
-🔒 El sistema es de acceso privado.
-📌 Próximamente incluiré funciones como:
 
-Exportar los datos a Excel/PDF.
 
-Agregar filtros por cliente.
-
-Mejorar el diseño para hacerlo aún más intuitivo.
-
-❤️ ¿Por qué es especial para mí?
-No es solo un ejercicio de código.
-Es una herramienta real que está ayudando a mi familia.
-Me permitió entender lo importante que es construir software útil, hecho a medida, que resuelva problemas reales.
-
-Más allá del código, esto es una forma de aportar a lo que siempre he visto en casa:
-el trabajo, el café, el esfuerzo diario.
-
-☕️ Este fue mi primer proyecto fullstack hecho totalmente por mí, y siempre va a tener un lugar especial en mi camino como desarrollador.
-
-👨‍💻 Sobre mí
-Soy Juan Manuel Paredes López, desarrollador Fullstack Junior e Ingeniero Mecatrónico.
-Este proyecto representa mi paso de estudiante a creador: no solo aprendí nuevas tecnologías, sino que desarrollé la confianza de construir algo completo y útil por mi cuenta.
-
-📎 Conéctate conmigo en LinkedIn
-
-📁 Repositorio
-Este proyecto es público con fines de portafolio.
-🔐 Está protegido: no tiene funciones de edición externas ni usuarios múltiples.
-⚠️ Aún no está listo para producción comercial, pero es una base sólida y real de lo que sé hacer.
-
-💬 Cualquier comentario o sugerencia será bienvenida.
-
-Gracias por leer y por llegar hasta aquí 🙌
