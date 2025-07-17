@@ -5,7 +5,7 @@ from app.models import User , Cliente , Maquila
 from datetime import timedelta
 
 
-admin_bp = Blueprint('admin', __name__)
+admin_bp = Blueprint('admin_bp', __name__)
 
 # RUTA TEST de http://127.0.0.1:5000/admin_bp que muestra "Hola mundo":
 @admin_bp.route('/', methods=['GET'])

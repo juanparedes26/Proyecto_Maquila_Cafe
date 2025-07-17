@@ -33,6 +33,7 @@ def create_app():
 
 
     admin = Admin(app, name="Panel Admin", template_mode="bootstrap3")
+    app.secret_key = "juan.paredes1005872250"
     from app.modelView import register_admin_views
     register_admin_views(admin, db)
 
@@ -45,7 +46,7 @@ def create_app():
     # Registramos blueprints
     from app.routes.admin_bp import admin_bp
     from app.routes.public_bp import public_bp
-    app.register_blueprint(admin_bp, url_prefix='/panel', name='panel_bp')  # Cambia '/admin' por '/panel'
+    app.register_blueprint(admin_bp, url_prefix='/panel')  
     app.register_blueprint(public_bp, url_prefix='/public')
 
     return app
