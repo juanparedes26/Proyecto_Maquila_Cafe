@@ -1,72 +1,98 @@
 # ☕ Proyecto Maquila Café - Beta v1
 
-Este es un proyecto fullstack que desarrollé en solitario, pensado para ayudar a mi papá a llevar el control de su negocio de maquilas de café. Antes de esta app, todo lo hacía a mano: anotaciones en cuadernos, cálculos con calculadora, y mucho trabajo repetitivo. Yo quería aplicar lo que he aprendido en desarrollo web para resolver un problema real que él enfrenta todos los días. Así nació esta aplicación, que ahora le permite llevar el control digital de todos sus clientes y maquilas desde cualquier dispositivo.
+Este es un proyecto **fullstack** que desarrollé en solitario para ayudar a mi papá a llevar el control de su negocio de maquilas de café. Antes, todo lo hacía a mano: anotaciones en cuadernos, cálculos con calculadora y mucho trabajo repetitivo. Esta aplicación digitaliza por completo ese proceso, permitiéndole gestionar clientes y maquilas desde cualquier dispositivo.
 
-Una *maquila* es el proceso de transformar café crudo en café tostado y empacado. Mi papá ofrece este servicio tanto a clientes empresariales con marca propia como a personas naturales que venden su café en mercados o comunidades. Cada maquila incluye etapas como trilla, tostión, empaque y entrega, y este proyecto permite registrar cada una, calcular automáticamente los valores según reglas predefinidas y llevar un historial ordenado de todo.
+---
 
-Haber construido esto solo, desde cero, como mi primer proyecto fullstack completo, es algo muy especial para mí. Fue un reto grande, pero también una experiencia muy significativa, porque no solo puse en práctica lo técnico, sino que construí algo que realmente mejora la vida de alguien cercano. Todo lo que ves aquí —el backend, frontend, diseño, autenticación, lógica de negocio— lo hice por mi cuenta.
+## 📌 ¿Qué es una maquila de café?
 
-## ¿Qué hace la app?
+Una **maquila** es el proceso de transformar café crudo en café tostado y empacado. Mi papá ofrece este servicio tanto a marcas propias como a personas naturales que venden su café en mercados o comunidades.  
+El proceso incluye:
 
-- Registro y edición de clientes (nombre, celular).
-- Registro de maquilas asociadas a un cliente, incluyendo:
-  - Peso de café ingresado.
-  - Tipo de proceso (granel o empacado).
-  - Tipo de tostión (claro, medio, oscuro).
-  - Tipo de empaque (bolsa o sin empaque).
-  - Cálculo automático de precio según las reglas del negocio.
-  - Observaciones adicionales.
-- Estado de maquila: se puede marcar como finalizada o dejar en proceso.
-- Visual dividida entre maquilas en proceso y finalizadas.
-- Botón "ver más" para cargar maquilas adicionales sin recargar la página.
-- Edición de maquilas ya registradas.
-- Autenticación protegida para que solo el administrador tenga acceso (mi papá).
+- Trilla  
+- Tostión (claro, medio u oscuro)  
+- Empaque (bolsa o sin empaque)  
+- Entrega  
 
-## Tecnologías utilizadas
+---
 
-- **Frontend:** React + Bootstrap
-- **Backend:** Flask + SQLAlchemy
-- **Base de datos:** SQLite (modo local de pruebas)
-- **Autenticación:** JWT
-- **Notificaciones:** React Toastify
-- **Diseño base:** Inspirado en un layout de [Federico Serron](https://www.linkedin.com/in/serron-federico/)
-  
-#🚀 Estado actual
-Este proyecto ya es completamente funcional para el uso que mi papá necesitaba.
-✅ Puede crear clientes, registrar maquilas, calcular precios automáticamente, editar maquilas existentes y filtrar maquilas entre "En proceso" y "Finalizadas".
-🔒 El sistema es de acceso privado.
-📌 Próximamente incluiré funciones como:
--**Mejorar el diseño para hacerlo aún más intuitivo.
--**Generar reportes mensuales
+## 🚀 ¿Qué hace esta app?
 
+- ✅ Registro y edición de clientes (nombre, celular)
+- ✅ Registro de maquilas asociadas a cada cliente:
+  - Peso de café ingresado
+  - Tipo de proceso: granel o empacado
+  - Tipo de tostión: claro, medio, oscuro
+  - Tipo de empaque: bolsa o sin empaque
+  - Observaciones adicionales
+  - Cálculo automático del precio según reglas del negocio
+  - Estado de maquila: en proceso o finalizada
+- ✅ Visual dividida entre maquilas en proceso y finalizadas
+- ✅ Botón “ver más” para cargar maquilas sin recargar la página
+- ✅ Edición de maquilas existentes
+- ✅ Autenticación protegida para que solo el administrador (mi papá) tenga acceso
 
-#❤️ ¿Por qué es especial para mí?
-No es solo un ejercicio de código.
-Es una herramienta real que está ayudando a mi familia.
-Me permitió entender lo importante que es construir software útil, hecho a medida, que resuelva problemas reales.
+---
 
-Más allá del código, esto es una forma de aportar a lo que siempre he visto en casa:
-el trabajo, el café, el esfuerzo diario.
+## 🛠️ Tecnologías utilizadas
 
-#☕️ Este fue mi primer proyecto fullstack hecho totalmente por mí, y siempre va a tener un lugar especial en mi camino como desarrollador.
+| Parte       | Tecnologías                             |
+|-------------|------------------------------------------|
+| Frontend    | React, Bootstrap, React Toastify         |
+| Backend     | Flask, SQLAlchemy                        |
+| Base de datos | SQLite (modo local de pruebas)         |
+| Autenticación | JSON Web Tokens (JWT)                  |
+| Diseño base | Layout inspirado en Federico Serron      |
 
-#👨‍💻 Sobre mí
-Soy Juan Manuel Paredes López, desarrollador Fullstack Junior e Ingeniero Mecatrónico.
-Este proyecto representa mi paso de estudiante a creador: no solo aprendí nuevas tecnologías, sino que desarrollé la confianza de construir algo completo y útil por mi cuenta.
+---
 
-📎 Conéctate conmigo en LinkedIn www.linkedin.com/in/juan-manuel-paredes-lopez-b7621224b
+## 📈 Estado actual
 
-#📁 Repositorio
+El sistema ya es completamente funcional para el uso que mi papá necesitaba:
+
+- ✅ Crear y editar clientes
+- ✅ Registrar y modificar maquilas
+- ✅ Calcular precios automáticamente
+- ✅ Filtrar maquilas entre “En proceso” y “Finalizadas”
+- 🔒 Sistema de acceso privado con autenticación JWT
+
+### Próximas mejoras:
+- 🎨 Mejorar el diseño para hacerlo aún más intuitivo  
+- 📊 Generar reportes mensuales descargables  
+
+---
+
+## ❤️ ¿Por qué es especial para mí?
+
+Este no es solo un ejercicio de código. Es una herramienta real que está **mejorando la vida de alguien cercano**.  
+Más allá de lo técnico, representa lo que siempre he visto en casa: **trabajo, café y esfuerzo diario**.
+
+Fue mi primer proyecto **fullstack** completo, hecho desde cero. Me ayudó a pasar de ser estudiante a creador, poniendo en práctica mis conocimientos para resolver un problema real.
+
+---
+
+## 👨‍💻 Sobre mí
+
+**Juan Manuel Paredes López**  
+Desarrollador Fullstack Junior • Ingeniero Mecatrónico  
+
+Este proyecto representa mi paso de estudiante a desarrollador. No solo aprendí tecnologías nuevas, sino que también desarrollé la confianza de construir algo completo y funcional por mi cuenta.
+
+📎 [Conéctate conmigo en LinkedIn](https://www.linkedin.com/in/juan-manuel-paredes-lopez-b7621224b)
+
+---
+
+## 📁 Repositorio
+
 Este proyecto es público con fines de portafolio.
-🔐 Está protegido: no tiene funciones de edición externas ni usuarios múltiples.
-⚠️ Aún no está listo para producción comercial, pero es una base sólida y real de lo que sé hacer.
 
-#💬 Cualquier comentario o sugerencia será bienvenida.
+- 🔐 Está protegido (no permite edición externa ni múltiples usuarios)
+- ⚠️ No está listo aún para producción comercial
+- 🧱 Pero es una **base sólida y funcional** de lo que sé hacer
 
-Gracias por leer y por llegar hasta aquí 🙌
+---
 
-
-## Instalación rápida
+## ⚙️ Instalación rápida
 
 ```bash
 git clone https://github.com/tuusuario/proyecto-maquila.git
@@ -81,5 +107,3 @@ flask run
 cd ../frontend
 npm install
 npm start
-
-
