@@ -65,7 +65,7 @@ def get_token():
         true_o_false = bcrypt.check_password_hash(password_from_db, password)
         
         if true_o_false:
-            expires = timedelta(minutes=60)
+            expires = timedelta(minutes=120)
 
             user_id = login_user.id
             access_token = create_access_token(identity=str(user_id), expires_delta=expires)

@@ -6,6 +6,7 @@ import MaquilaFormModal from "../components/MaquilaFormModal.jsx";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 const MySwal = withReactContent(Swal);
+import MaquilaViewModal from "../components/MaquilaViewModal.jsx";
 
 function PerfilCliente() {
   const { id } = useParams();
@@ -15,8 +16,10 @@ function PerfilCliente() {
   const [maquilas, setMaquilas] = useState([]);
   const [showMaquilaModal, setShowMaquilaModal] = useState(false);
   const [editMaquila, setEditMaquila] = useState(null);
+  const [showViewModal, setShowViewModal] = useState(false);
+ const [maquilaToView, setMaquilaToView] = useState(null);
 
-  // Estados para controlar cuántas maquilas mostrar
+  
   const [showFinalizadas, setShowFinalizadas] = useState(5);
   const [showEnProceso, setShowEnProceso] = useState(5);
 
@@ -108,15 +111,22 @@ function PerfilCliente() {
         <>
           <h1 style={{ color: "#4b2e19", fontWeight: "bold" }}>{cliente.nombre}</h1>
           <h4 style={{ color: "#4b2e19" }}>{cliente.celular}</h4>
-          <div className="d-flex align-items-center gap-3 mb-3">
-            <button className="btn btn-success" onClick={() => { setShowMaquilaModal(true); setEditMaquila(null); }}>Añadir Maquila</button>
-            <button
-              className="btn btn-secondary"
-              onClick={() => navigate(-1)}
-            >
-              Volver
-            </button>
-          </div>
+         <div className="d-flex align-items-center gap-3 mb-4">
+                <button
+                    className="btn btn-success btn-lg d-flex align-items-center gap-2 shadow"
+                    style={{ fontWeight: "bold", borderRadius: "1.5rem" }}
+                    onClick={() => { setShowMaquilaModal(true); setEditMaquila(null); }}
+                >
+                    <i className="bi bi-plus-circle"></i> Añadir Maquila
+                </button>
+                <button
+                    className="btn btn-outline-secondary btn-lg d-flex align-items-center gap-2 shadow"
+                    style={{ fontWeight: "bold", borderRadius: "1.5rem", color: "#6f4e37", borderColor: "#6f4e37" }}
+                    onClick={() => navigate(-1)}
+                >
+                    <i className="bi bi-arrow-left-circle"></i> Volver
+                </button>
+        </div>
           <h5
             style={{
                 color: "#4b2e19",
@@ -163,8 +173,8 @@ function PerfilCliente() {
                 <td>{maquila.cantidad_libras || "-"}</td>
                 <td>{maquila.observaciones || "-"}</td>
                 <td>
-                    <span className="badge" style={{ background: "#6f4e37", color: "#fffbe7" }}>
-                        <i className="bi bi-hourglass-split"></i> En proceso
+                     <span className="badge d-flex align-items-center gap-2" style={{ background: "#c0a16b", color: "#4b2e19" ,fontWeight: "bold"}}>
+                        <i className="bi bi-gear-fill spinner-border spinner-border-sm" style={{ border: "none" }}></i> En proceso
                     </span>
                 </td>
                 <td>
@@ -184,7 +194,12 @@ function PerfilCliente() {
                         Editar
                     </button>
                     <button
-                        className="btn btn-danger btn-sm"
+                        className="btn btn-sm"
+                        style={{
+                            background: "#b97a56", 
+                            color: "#fffbe7",
+                            fontWeight: "bold"
+                        }}
                         onClick={() => handleDeleteMaquila(maquila.id)}
                     >
                         Eliminar
@@ -256,12 +271,29 @@ function PerfilCliente() {
                     {maquila.precio_total_str || `$${maquila.precio_total}`}
                 </td>
                 <td>
-                    <button
-                    className="btn btn-danger btn-sm"
-                    onClick={() => handleDeleteMaquila(maquila.id)}
-                    >
-                    Eliminar
-                    </button>
+                    <div className="d-flex flex-column gap-2">
+                        <button
+                            className="btn btn-sm"
+                            style={{ background: "#6f4e37", color: "#fffbe7", fontWeight: "bold" }}
+                            onClick={() => {
+                                setMaquilaToView(maquila);
+                                setShowViewModal(true);
+                            }}
+                            >
+                            <i className="bi bi-eye"></i> Ver
+                        </button>
+                        <button
+                            className="btn btn-sm"
+                            style={{
+                                background: "#b97a56", 
+                                color: "#fffbe7",
+                                fontWeight: "bold"
+                            }}
+                            onClick={() => handleDeleteMaquila(maquila.id)}
+                            >
+                            Eliminar
+                        </button>
+                </div>
                 </td>
                 </tr>
             ))}
@@ -285,7 +317,14 @@ function PerfilCliente() {
             cliente={cliente}
             maquila={editMaquila}
           />
+            <MaquilaViewModal
+                show={showViewModal}
+                onClose={() => setShowViewModal(false)}
+                maquila={maquilaToView}
+                />
+       
         </>
+
       )}
     </div>
   );

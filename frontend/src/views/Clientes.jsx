@@ -35,9 +35,7 @@ useEffect(() => {
 }, [store.clientes]);
 
 
-  /*useEffect(() => {
-    setClientes(store.clientes);
-  }, [store.clientes]);*/
+
 
   const handleAddCliente = async (e) => {
     e.preventDefault();
