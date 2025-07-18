@@ -117,157 +117,166 @@ function PerfilCliente() {
               Volver
             </button>
           </div>
-
-        <h5
-                style={{
+          <h5
+            style={{
                 color: "#4b2e19",
                 fontWeight: "bold",
                 fontSize: "2rem",
                 fontFamily: "'Segoe UI', 'Arial', sans-serif",
                 letterSpacing: "1px",
-                margin: 0,
+                marginBottom: "1.5rem",
                 display: "flex",
                 alignItems: "center",
-                gap: "8px"
-                }}
+                gap: "10px"
+            }}
             >
-                 Maquilas en proceso ⏳
-            </h5>
-          <div className="table-responsive">
-            <table className="table align-middle">
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Peso (kg)</th>
-                  <th>¿Trillado?</th>
-                  <th>Peso después de trilla</th>
-                  <th>Grado de tostión</th>
-                  <th>Tipo de empaque</th>
-                  <th>Cant. libras</th>
-                  <th>Observaciones</th>
-                  <th>Estado</th>
-                  <th>Precio</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {enProceso.map(maquila => (
-                  <tr key={maquila.id}>
-                    <td>{maquila.fecha}</td>
-                    <td>{maquila.peso_kg}</td>
-                    <td>{maquila.esta_trillado ? "Sí" : "No"}</td>
-                    <td>{maquila.peso_despues_trilla_kg || "-"}</td>
-                    <td>{maquila.grado_tostion}</td>
-                    <td>{maquila.tipo_empaque}</td>
-                    <td>{maquila.cantidad_libras || "-"}</td>
-                    <td>{maquila.observaciones || "-"}</td>
-                    <td>
-                      <span className="badge bg-primary">
+         Maquilas en proceso ⏳
+        </h5>
+
+       
+        <div className="table-responsive rounded-4 shadow-sm mb-5" style={{ background: "#fffbe7", padding: "1rem" }}>
+        <table className="table align-middle table-striped table-hover table-bordered mb-0">
+            <thead style={{ background: "#c0a16b", color: "#fffbe7" }}>
+            <tr>
+                <th>Fecha</th>
+                <th>Peso (kg)</th>
+                <th>¿Trillado?</th>
+                <th>Peso después de trilla</th>
+                <th>Grado de tostión</th>
+                <th>Tipo de empaque</th>
+                <th>Cant. libras</th>
+                <th>Observaciones</th>
+                <th>Estado</th>
+                <th>Precio</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            {enProceso.map(maquila => (
+                <tr key={maquila.id}>
+                <td>{maquila.fecha}</td>
+                <td>{maquila.peso_kg}</td>
+                <td>{maquila.esta_trillado ? "Sí" : "No"}</td>
+                <td>{maquila.peso_despues_trilla_kg || "-"}</td>
+                <td>{maquila.grado_tostion}</td>
+                <td>{maquila.tipo_empaque}</td>
+                <td>{maquila.cantidad_libras || "-"}</td>
+                <td>{maquila.observaciones || "-"}</td>
+                <td>
+                    <span className="badge" style={{ background: "#6f4e37", color: "#fffbe7" }}>
                         <i className="bi bi-hourglass-split"></i> En proceso
-                      </span>
-                    </td>
-                    <td>
-                      <i className="bi bi-hourglass-split"></i>
-                    </td>
-                    <td>
-                     <div className="d-flex flex-column gap-2">
-                        <button
-                            className="btn btn-sm"
-                            style={{ background: "#6f4e37", color: "#fffbe7", fontWeight: "bold" }}
-                            onClick={() => handleEditMaquila(maquila)}
-                            >
-                            Editar
-                        </button>
-                        <button
-                        className="btn btn-danger btn-sm"
-                        onClick={() => handleDeleteMaquila(maquila.id)}
-                        >
-                        Eliminar
-                        </button>
+                    </span>
+                </td>
+                <td>
+                     <div className="d-flex justify-content-center align-items-center">
+                        <div className="spinner-border spinner-border-sm" style={{ color: "#c0a16b" }} role="status">
+                            <span className="visually-hidden">En proceso</span>
+                        </div>
                     </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {enProcesoAll.length > showEnProceso && (
-              <div className="text-center mb-3">
-                <button className="btn btn-link" onClick={() => setShowEnProceso(showEnProceso + 5)}>
-                  Ver más en proceso
-                </button>
-              </div>
-            )}
-          </div>
-
-                <h5
-                style={{
-                color: "#4b2e19",
-                fontWeight: "bold",
-                fontSize: "2rem",
-                fontFamily: "'Segoe UI', 'Arial', sans-serif",
-                letterSpacing: "1px",
-                margin: 0,
-                display: "flex",
-                alignItems: "center",
-                gap: "8px"
-                }}
-            >
-                 Maquilas finalizadas✅
-            </h5>
-          <div className="table-responsive">
-            <table className="table align-middle">
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Peso (kg)</th>
-                  <th>¿Trillado?</th>
-                  <th>Peso después de trilla</th>
-                  <th>Grado de tostión</th>
-                  <th>Tipo de empaque</th>
-                  <th>Cant. libras</th>
-                  <th>Observaciones</th>
-                  <th>Estado</th>
-                  <th>Precio</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {finalizadas.map(maquila => (
-                  <tr key={maquila.id}>
-                    <td>{maquila.fecha}</td>
-                    <td>{maquila.peso_kg}</td>
-                    <td>{maquila.esta_trillado ? "Sí" : "No"}</td>
-                    <td>{maquila.peso_despues_trilla_kg || "-"}</td>
-                    <td>{maquila.grado_tostion}</td>
-                    <td>{maquila.tipo_empaque}</td>
-                    <td>{maquila.cantidad_libras || "-"}</td>
-                    <td>{maquila.observaciones || "-"}</td>
-                    <td>
-                      <span className="badge bg-success">Finalizado</span>
-                    </td>
-                    <td>
-                      {maquila.precio_total_str || `$${maquila.precio_total}`}
-                    </td>
-                    <td>
-                      <button
+                </td>
+                <td>
+                    <div className="d-flex flex-column gap-2">
+                    <button
+                        className="btn btn-sm"
+                        style={{ background: "#6f4e37", color: "#fffbe7", fontWeight: "bold" }}
+                        onClick={() => handleEditMaquila(maquila)}
+                    >
+                        Editar
+                    </button>
+                    <button
                         className="btn btn-danger btn-sm"
                         onClick={() => handleDeleteMaquila(maquila.id)}
-                        >
+                    >
                         Eliminar
-                        </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {finalizadasAll.length > showFinalizadas && (
-              <div className="text-center mb-3">
-                <button className="btn btn-link" onClick={() => setShowFinalizadas(showFinalizadas + 5)}>
-                  Ver más finalizadas
-                </button>
-              </div>
-            )}
-          </div>
+                    </button>
+                    </div>
+                </td>
+                </tr>
+            ))}
+            </tbody>
+        </table>
+        {enProcesoAll.length > showEnProceso && (
+            <div className="text-center mb-3">
+            <button className="btn btn-link" onClick={() => setShowEnProceso(showEnProceso + 5)}>
+                Ver más en proceso
+            </button>
+            </div>
+        )}
+        </div>
+
+      
+        <h5
+        style={{
+            color: "#4b2e19",
+            fontWeight: "bold",
+            fontSize: "2rem",
+            fontFamily: "'Segoe UI', 'Arial', sans-serif",
+            letterSpacing: "1px",
+            marginBottom: "1.5rem",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px"
+        }}
+        >
+         Maquilas finalizadas ✅
+        </h5>
+
+        <div className="table-responsive rounded-4 shadow-sm mb-5" style={{ background: "#fffbe7", padding: "1rem" }}>
+        <table className="table align-middle table-striped table-hover table-bordered mb-0">
+            <thead style={{ background: "#c0a16b", color: "#fffbe7" }}>
+            <tr>
+                <th>Fecha</th>
+                <th>Peso (kg)</th>
+                <th>¿Trillado?</th>
+                <th>Peso después de trilla</th>
+                <th>Grado de tostión</th>
+                <th>Tipo de empaque</th>
+                <th>Cant. libras</th>
+                <th>Observaciones</th>
+                <th>Estado</th>
+                <th>Precio</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            {finalizadas.map(maquila => (
+                <tr key={maquila.id}>
+                <td>{maquila.fecha}</td>
+                <td>{maquila.peso_kg}</td>
+                <td>{maquila.esta_trillado ? "Sí" : "No"}</td>
+                <td>{maquila.peso_despues_trilla_kg || "-"}</td>
+                <td>{maquila.grado_tostion}</td>
+                <td>{maquila.tipo_empaque}</td>
+                <td>{maquila.cantidad_libras || "-"}</td>
+                <td>{maquila.observaciones || "-"}</td>
+                <td>
+                    <span className="badge bg-success">Finalizado</span>
+                </td>
+                <td>
+                    {maquila.precio_total_str || `$${maquila.precio_total}`}
+                </td>
+                <td>
+                    <button
+                    className="btn btn-danger btn-sm"
+                    onClick={() => handleDeleteMaquila(maquila.id)}
+                    >
+                    Eliminar
+                    </button>
+                </td>
+                </tr>
+            ))}
+            </tbody>
+        </table>
+        {finalizadasAll.length > showFinalizadas && (
+            <div className="text-center mb-3">
+            <button className="btn btn-link" onClick={() => setShowFinalizadas(showFinalizadas + 5)}>
+                Ver más finalizadas
+            </button>
+            </div>
+        )}
+</div>
+
+       
 
           <MaquilaFormModal
             show={showMaquilaModal}

@@ -78,105 +78,148 @@ function MaquilaFormModal({ show, onClose, onSubmit, cliente, maquila }) {
   if (!show) return null;
 
   return (
-    <div className="modal d-block" tabIndex="-1" style={{ background: "rgba(0,0,0,0.5)" }}>
-      <div className="modal-dialog">
-        <div className="modal-content">
-          <form onSubmit={handleSubmit}>
-            <div className="modal-header">
-              <h5 className="modal-title">Añadir Maquila para {cliente?.nombre}</h5>
-              <button type="button" className="btn-close" onClick={onClose}></button>
-            </div>
-            <div className="modal-body">
+   <div className="modal d-block" tabIndex="-1" style={{ background: "rgba(0,0,0,0.5)" }}>
+  <div className="modal-dialog">
+    <div className="modal-content rounded-4 shadow" style={{ background: "#fffbe7" }}>
+      <form onSubmit={handleSubmit}>
+        <div className="modal-header" style={{ borderBottom: "2px solid #c0a16b" }}>
+          <h5 className="modal-title" style={{ color: "#6f4e37", fontWeight: "bold", fontSize: "1.5rem", display: "flex", alignItems: "center", gap: "10px" }}>
+            🛠️ {maquila ? "Editar" : "Añadir"} Maquila para {cliente?.nombre}
+          </h5>
+          <button type="button" className="btn-close" onClick={onClose}></button>
+        </div>
+        <div className="modal-body">
+          <div className="mb-3">
+            <label className="form-label fw-bold" style={{ color: "#4b2e19" }}>
+              <i className="bi bi-box"></i> Peso (kg) *
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              placeholder="Ej: 50"
+              value={peso_kg}
+              onChange={e => setPesoKg(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-check mb-3">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="trillado"
+              checked={esta_trillado}
+              onChange={e => setEstaTrillado(e.target.checked)}
+            />
+            <label className="form-check-label" htmlFor="trillado" style={{ color: "#4b2e19" }}>
+              ¿Está trillado?
+            </label>
+          </div>
+          {!esta_trillado && (
+            <div className="mb-3">
+              <label className="form-label fw-bold" style={{ color: "#4b2e19" }}>
+                <i className="bi bi-arrow-down"></i> Peso después de trilla (kg)
+              </label>
               <input
                 type="number"
-                className="form-control mb-2"
-                placeholder="Peso (kg) *"
-                value={peso_kg}
-                onChange={e => setPesoKg(e.target.value)}
-                required
+                className="form-control"
+                placeholder="Ej: 45"
+                value={peso_despues_trilla_kg}
+                onChange={e => setPesoDespuesTrillaKg(e.target.value)}
               />
-              <div className="form-check mb-2">
+            </div>
+          )}
+          <div className="mb-3">
+            <label className="form-label fw-bold" style={{ color: "#4b2e19" }}>
+              <i className="bi bi-fire"></i> Grado de tostión *
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Ej: Medio"
+              value={grado_tostion}
+              onChange={e => setGradoTostion(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <label className="form-label fw-bold" style={{ color: "#4b2e19" }}>
+              <i className="bi bi-bag"></i> Tipo de empaque *
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Ej: Libras, Granel"
+              value={tipo_empaque}
+              onChange={e => setTipoEmpaque(e.target.value)}
+              required
+            />
+          </div>
+          {(tipo_empaque.toLowerCase() === "libras" || tipo_empaque.toLowerCase() === "libra") && (
+            <>
+              <div className="mb-3">
+                <label className="form-label fw-bold" style={{ color: "#4b2e19" }}>
+                  <i className="bi bi-123"></i> Cantidad de libras
+                </label>
+                <input
+                  type="number"
+                  className="form-control"
+                  placeholder="Ej: 100"
+                  value={cantidad_libras}
+                  onChange={e => setCantidadLibras(e.target.value)}
+                />
+              </div>
+              <div className="form-check mb-3">
                 <input
                   type="checkbox"
                   className="form-check-input"
-                  id="trillado"
-                  checked={esta_trillado}
-                  onChange={e => setEstaTrillado(e.target.checked)}
+                  id="cobraEmpaque"
+                  checked={cobra_empaque}
+                  onChange={e => setCobraEmpaque(e.target.checked)}
                 />
-                <label className="form-check-label" htmlFor="trillado">¿Está trillado?</label>
+                <label className="form-check-label" htmlFor="cobraEmpaque" style={{ color: "#4b2e19" }}>
+                  ¿Se cobra el empaque?
+                </label>
               </div>
-              {!esta_trillado && (
-                <input
-                  type="number"
-                  className="form-control mb-2"
-                  placeholder="Peso después de trilla (kg)"
-                  value={peso_despues_trilla_kg}
-                  onChange={e => setPesoDespuesTrillaKg(e.target.value)}
-                />
-              )}
-              <input
-                type="text"
-                className="form-control mb-2"
-                placeholder="Grado de tostión *"
-                value={grado_tostion}
-                onChange={e => setGradoTostion(e.target.value)}
-                required
-              />
-              <input
-                type="text"
-                className="form-control mb-2"
-                placeholder="Tipo de empaque *"
-                value={tipo_empaque}
-                onChange={e => setTipoEmpaque(e.target.value)}
-                required
-              />
-              {(tipo_empaque.toLowerCase() === "libras" || tipo_empaque.toLowerCase() === "libra") && (
-                <>
+              {cobra_empaque && (
+                <div className="mb-3">
+                  <label className="form-label fw-bold" style={{ color: "#4b2e19" }}>
+                    <i className="bi bi-cash-coin"></i> Precio unitario del empaque
+                  </label>
                   <input
                     type="number"
-                    className="form-control mb-2"
-                    placeholder="Cantidad de libras"
-                    value={cantidad_libras}
-                    onChange={e => setCantidadLibras(e.target.value)}
+                    className="form-control"
+                    placeholder="Ej: 10"
+                    value={precio_unitario_empaque}
+                    onChange={e => setPrecioUnitarioEmpaque(e.target.value)}
                   />
-                  <div className="form-check mb-2">
-                    <input
-                      type="checkbox"
-                      className="form-check-input"
-                      id="cobraEmpaque"
-                      checked={cobra_empaque}
-                      onChange={e => setCobraEmpaque(e.target.checked)}
-                    />
-                    <label className="form-check-label" htmlFor="cobraEmpaque">
-                      ¿Se cobra el empaque?
-                    </label>
-                  </div>
-                  {cobra_empaque && (
-                    <input
-                      type="number"
-                      className="form-control mb-2"
-                      placeholder="Precio unitario del empaque"
-                      value={precio_unitario_empaque}
-                      onChange={e => setPrecioUnitarioEmpaque(e.target.value)}
-                    />
-                  )}
-                </>
+                </div>
               )}
-              <textarea
-                className="form-control mb-2"
-                placeholder="Observaciones (opcional)"
-                value={observaciones}
-                onChange={e => setObservaciones(e.target.value)}
-              />
-            </div>
-            <div className="modal-footer">
-              <button type="submit" className="btn btn-success">Guardar</button>
-              <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>
-            </div>
-          </form>
+            </>
+          )}
+          <div className="mb-3">
+            <label className="form-label fw-bold" style={{ color: "#4b2e19" }}>
+              <i className="bi bi-chat-left-text"></i> Observaciones (opcional)
+            </label>
+            <textarea
+              className="form-control"
+              placeholder="Observaciones"
+              value={observaciones}
+              onChange={e => setObservaciones(e.target.value)}
+            />
+          </div>
         </div>
-      </div>
+        <div className="modal-footer" style={{ borderTop: "2px solid #c0a16b" }}>
+          <button type="submit" className="btn btn-success btn-lg">
+            <i className="bi bi-save"></i> Guardar
+          </button>
+          <button type="button" className="btn btn-secondary btn-lg" onClick={onClose}>
+            <i className="bi bi-x-circle"></i> Cancelar
+          </button>
+        </div>
+      </form>
     </div>
+  </div>
+</div>
   );
 }
 
