@@ -1,4 +1,3 @@
-
 import maquilaImg from "../assets/Maquila.jpg";
 import React, { useContext } from "react";
 import { Context } from "../js/store/appContext.jsx";
@@ -19,35 +18,25 @@ function Home() {
         padding: 0
       }}
     >
-      {/* Capa oscura */}
       <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          background: "rgba(111, 78, 55, 0.7)",
-          zIndex: 1
-        }}
-      />
-
-      <div
-        className="text-center d-flex flex-column align-items-center justify-content-center"
+        className="glass text-center d-flex flex-column align-items-center justify-content-center"
         style={{
           position: "relative",
           zIndex: 2,
           width: "100%",
           maxWidth: "480px",
           margin: "0 auto",
-          background: "none",
           borderRadius: "18px",
-          boxShadow: "none",
-          padding: "32px 24px"
+          boxShadow: "0 4px 24px #4b2e19aa",
+          padding: "32px 24px",
+          background: "rgba(111, 78, 55, 0.7)"
         }}
       >
+        <div className="mb-3">
+          <i className="bi bi-cup-hot" style={{ fontSize: "2.5rem", color: "#c0a16b" }}></i>
+        </div>
         <h1
-          className="mb-3"
+          className="mb-2"
           style={{
             color: "#fffbe7",
             fontWeight: "bold",
@@ -56,6 +45,9 @@ function Home() {
         >
           ¡Bienvenido a Maquilas Don Andres!
         </h1>
+        <p style={{ color: "#c0a16b", fontWeight: "bold", fontSize: "1.1rem" }}>
+          ¡Transformando café en experiencias!
+        </p>
         <p
           className="lead mb-4"
           style={{
@@ -72,13 +64,12 @@ function Home() {
         {!store.token && (
           <Link
             to="/login"
-            className="btn btn-lg"
-            style={{ background: "#c0a16b", color: "#fffbe7", fontWeight: "bold" }}
+            className="btn btn-lg d-flex align-items-center gap-2 mt-2"
+            style={{ background: "#c0a16b", color: "#fffbe7", fontWeight: "bold", borderRadius: "1.5rem" }}
           >
-            Iniciar Sesión
+            <i className="bi bi-box-arrow-in-right"></i> Iniciar Sesión
           </Link>
         )}
-       
       </div>
     </div>
   );

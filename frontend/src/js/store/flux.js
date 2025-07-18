@@ -86,11 +86,14 @@ const getState = ({ getStore, setStore }) => {
 				
 					if (res.status === 200 && Array.isArray(data)) {
 						setStore({ ...store, clientes: data });
+						return true;
 					} else {
 						toast.error(data.error || 'No se pudieron obtener los clientes');
+						return false;
 					}
 				} catch (error) {
 					toast.error('Error al obtener clientes: ' + error.message);
+					return false;
 				}
 			},
 		

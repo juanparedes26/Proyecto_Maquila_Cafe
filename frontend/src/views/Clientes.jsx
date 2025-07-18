@@ -5,6 +5,8 @@ import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 const MySwal = withReactContent(Swal);
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+
 
 function Clientes() {
   const navigate = useNavigate();
@@ -16,24 +18,29 @@ function Clientes() {
   const [editNombre, setEditNombre] = useState("");
   const [editCelular, setEditCelular] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-/*const [clientes, setClientes] = useState([]);*/
+  const location = useLocation();
+
+
 useEffect(() => {
   const fetchClientes = async () => {
-    setIsLoading(true);
-    if (store.token && typeof store.token === "string" && store.token.length > 0) {
-      await actions.getClientes();
-    } else {
-      toast.error("Debes iniciar sesión para ver los clientes");
+    if (!store.token || typeof store.token !== "string" || store.token.length === 0) {
+      setIsLoading(false);
+      return;
     }
 
+    setIsLoading(true);
+    const success = await actions.getClientes();
+    if (!success) {
+      console.warn("Error al obtener clientes");
+    }
+    setIsLoading(false);
   };
-  fetchClientes();
-}, [store.token]);
-useEffect(() => {
-  
-  setIsLoading(false);
-}, [store.clientes]);
 
+
+  if (location.pathname === "/clientes") {
+    fetchClientes();
+  }
+}, [store.token, location.pathname]); // 👈 se vuelve a ejecutar al volver
 
 
 
@@ -85,139 +92,170 @@ useEffect(() => {
     }
   };
 
-  
-const clientesFiltrados = Array.isArray(store.clientes)
-  ? store.clientes
-      .filter(cliente =>
-        cliente.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-        cliente.celular.includes(busqueda)
-      )
-      .reverse()
-      .slice(0, 5)
-  : [];
-return (
-  <div className="container py-4">
-    <h2 className="mb-4" style={{ color: "#6f4e37", fontWeight: "bold" }}>Clientes</h2>
-    <form className="mb-4 d-flex gap-2 align-items-center" onSubmit={handleAddCliente}>
-      <div className="input-group" style={{ maxWidth: "250px" }}>
-        <span className="input-group-text" style={{ background: "#c0a16b", color: "#fffbe7", fontWeight: "bold" }}>
-          <i className="bi bi-person"></i>
-        </span>
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Nombre"
-          value={nombre}
-          onChange={e => setNombre(e.target.value)}
-          required
-          style={{ borderColor: "#c0a16b", borderRadius: "0 8px 8px 0" }}
-        />
-      </div>
-      <div className="input-group" style={{ maxWidth: "200px" }}>
-        <span className="input-group-text" style={{ background: "#c0a16b", color: "#fffbe7", fontWeight: "bold" }}>
-          <i className="bi bi-phone"></i>
-        </span>
-        <input
-          type="number"
-          className="form-control"
-          placeholder="Celular"
-          value={celular}
-          onChange={e => setCelular(e.target.value)}
-          required
-          style={{ borderColor: "#c0a16b", borderRadius: "0 8px 8px 0" }}
-        />
-      </div>
-      <button type="submit" className="btn btn-lg" style={{ background: "#c0a16b", color: "#fffbe7", fontWeight: "bold", borderRadius: "8px" }}>
-        Agregar Cliente
-      </button>
-    </form>
+  const clientesFiltrados = Array.isArray(store.clientes)
+    ? store.clientes
+        .filter(cliente =>
+          cliente.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+          cliente.celular.includes(busqueda)
+        )
+        .reverse()
+        .slice(0, 5)
+    : [];
 
-    <input
-      type="text"
-      className="form-control mb-3"
-      placeholder="Buscar por nombre o celular"
-      value={busqueda}
-      onChange={e => setBusqueda(e.target.value)}
-      style={{
-        maxWidth: "300px",
-        borderColor: "#6f4e37",
-        borderRadius: "8px",
-        boxShadow: "0 2px 8px rgba(192,161,107,0.1)"
-      }}
-    />
-
-
-    {isLoading || store.clientes === null? (
-      <div className="text-center my-5">
-        <div className="spinner-border" style={{ color: "#c0a16b", width: "3rem", height: "3rem" }} role="status">
-          <span className="visually-hidden">Cargando...</span>
+  return (
+    <div className="container py-4">
+      <h2 className="mb-4" style={{ color: "#6f4e37", fontWeight: "bold" }}>Clientes</h2>
+      <div className="card shadow-sm mb-4" style={{ background: "#fffbe7", borderRadius: "16px", border: "none" }}>
+        <div className="card-body">
+          <form className="d-flex gap-2 align-items-center flex-wrap" onSubmit={handleAddCliente}>
+            <div className="input-group" style={{ maxWidth: "250px" }}>
+              <span className="input-group-text" style={{ background: "#c0a16b", color: "#fffbe7", fontWeight: "bold" }}>
+                <i className="bi bi-person"></i>
+              </span>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Nombre"
+                value={nombre}
+                onChange={e => setNombre(e.target.value)}
+                required
+                style={{ borderColor: "#c0a16b", borderRadius: "0 8px 8px 0" }}
+              />
+            </div>
+            <div className="input-group" style={{ maxWidth: "200px" }}>
+              <span className="input-group-text" style={{ background: "#c0a16b", color: "#fffbe7", fontWeight: "bold" }}>
+                <i className="bi bi-phone"></i>
+              </span>
+              <input
+                type="number"
+                className="form-control"
+                placeholder="Celular"
+                value={celular}
+                onChange={e => setCelular(e.target.value)}
+                required
+                style={{ borderColor: "#c0a16b", borderRadius: "0 8px 8px 0" }}
+              />
+            </div>
+            <button type="submit" className="btn btn-lg d-flex align-items-center gap-2"
+              style={{ background: "#c0a16b", color: "#fffbe7", fontWeight: "bold", borderRadius: "1.5rem" }}>
+              <i className="bi bi-person-plus"></i> Agregar Cliente
+            </button>
+          </form>
+          {/* Buscador debajo del formulario */}
+          <div className="input-group mt-3" style={{ maxWidth: "300px", height: "48px" }}>
+            <span className="input-group-text" style={{ background: "#c0a16b", color: "#fffbe7" }}>
+              <i className="bi bi-search"></i>
+            </span>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Buscar por nombre o celular"
+              value={busqueda}
+              onChange={e => setBusqueda(e.target.value)}
+              style={{
+                borderColor: "#6f4e37",
+                borderRadius: "0 8px 8px 0",
+                height: "48px",
+                boxShadow: "0 2px 8px rgba(192,161,107,0.1)"
+              }}
+            />
+          </div>
         </div>
-        <div style={{ color: "#6f4e37", marginTop: "10px" }}>Cargando clientes...</div>
       </div>
-    ) : (
-      <div className="table-responsive">
-        <table className="table align-middle" style={{ background: "#fffbe7", borderRadius: "12px", overflow: "hidden" }}>
-          <thead style={{ background: "#6f4e37", color: "#fffbe7" }}>
-            <tr>
-              <th>Nombre</th>
-              <th>Celular</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {clientesFiltrados.length > 0 ? (
-              clientesFiltrados.map(cliente =>
-                editId === cliente.id ? (
-                  <tr key={cliente.id} style={{ background: "#f7ecd7" }}>
-                    <td>
-                      <input
-                        type="text"
-                        value={editNombre}
-                        onChange={e => setEditNombre(e.target.value)}
-                        className="form-control"
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        value={editCelular}
-                        onChange={e => setEditCelular(e.target.value)}
-                        className="form-control"
-                      />
-                    </td>
-                    <td>
-                      <button   type="button" className="btn btn-sm me-2" style={{ background: "#6f4e37", color: "#fffbe7", fontWeight: "bold" }} onClick={handleUpdateCliente}>Guardar</button>
-                      <button className="btn btn-sm" style={{ background: "#b94a48", color: "#fffbe7", fontWeight: "bold" }} onClick={() => setEditId(null)}>Cancelar</button>
-                    </td>
-                  </tr>
-                ) : (
-                  <tr key={cliente.id} style={{ background: "#f7ecd7" }}>
-                    <td style={{ color: "#4b2e19", fontWeight: "bold" }}>{cliente.nombre}</td>
-                    <td style={{ color: "#4b2e19" }}>{cliente.celular}</td>
-                    <td>
-                      <button className="btn btn-sm me-2" style={{ background: "#c0a16b", color: "#fffbe7", fontWeight: "bold" }} onClick={() => startEditCliente(cliente)}>Editar</button>
-                      <button
-                        className="btn btn-sm me-2"
-                        style={{ background: "#6f4e37", color: "#fffbe7", fontWeight: "bold" }}
-                        onClick={() => navigate(`/perfil-cliente/${cliente.id}`)}
-                      >
-                        Ver más
-                      </button>
-                      <button className="btn btn-sm" onClick={() => handleDeleteCliente(cliente.id)} style={{ background: "#b94a48", color: "#fffbe7", fontWeight: "bold" }}>Eliminar</button>
-                    </td>
-                  </tr>
-                )
-              )
-            ) : (
+
+      {isLoading || store.clientes === null ? (
+        <div className="text-center my-5">
+          <div className="spinner-border" style={{ color: "#c0a16b", width: "3rem", height: "3rem" }} role="status">
+            <span className="visually-hidden">Cargando...</span>
+          </div>
+          <div style={{ color: "#6f4e37", marginTop: "10px" }}>Cargando clientes...</div>
+        </div>
+      ) : (
+        <div className="table-responsive">
+          <table className="table align-middle table-striped table-hover" style={{ background: "#fffbe7", borderRadius: "12px", overflow: "hidden" }}>
+            <thead style={{ background: "#6f4e37", color: "#fffbe7" }}>
               <tr>
-                <td colSpan={3} className="text-center" style={{ color: "#6f4e37", background: "#f7ecd7" }}>No hay clientes registrados.</td>
+                <th>Nombre</th>
+                <th>Celular</th>
+                <th>Acciones</th>
               </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-    )}
-  </div>
-);
+            </thead>
+            <tbody>
+              {clientesFiltrados.length > 0 ? (
+                clientesFiltrados.map(cliente =>
+                  editId === cliente.id ? (
+                    <tr key={cliente.id} style={{ background: "#f7ecd7" }}>
+                      <td>
+                        <input
+                          type="text"
+                          value={editNombre}
+                          onChange={e => setEditNombre(e.target.value)}
+                          className="form-control"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          value={editCelular}
+                          onChange={e => setEditCelular(e.target.value)}
+                          className="form-control"
+                        />
+                      </td>
+                      <td>
+                        <button type="button" className="btn btn-sm me-2"
+                          style={{ background: "#6f4e37", color: "#fffbe7", fontWeight: "bold" }}
+                          onClick={handleUpdateCliente}
+                          title="Guardar">
+                          <i className="bi bi-check-lg"></i>
+                        </button>
+                        <button className="btn btn-sm"
+                          style={{ background: "#b94a48", color: "#fffbe7", fontWeight: "bold" }}
+                          onClick={() => setEditId(null)}
+                          title="Cancelar">
+                          <i className="bi bi-x-lg"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  ) : (
+                    <tr key={cliente.id} style={{ background: "#f7ecd7" }}>
+                      <td style={{ color: "#4b2e19", fontWeight: "bold" }}>{cliente.nombre}</td>
+                      <td style={{ color: "#4b2e19" }}>{cliente.celular}</td>
+                      <td>
+                        <button className="btn btn-sm me-2"
+                          style={{ background: "#c0a16b", color: "#fffbe7", fontWeight: "bold" }}
+                          onClick={() => startEditCliente(cliente)}
+                          title="Editar">
+                          <i className="bi bi-pencil"></i>
+                        </button>
+                        <button className="btn btn-sm me-2"
+                          style={{ background: "#6f4e37", color: "#fffbe7", fontWeight: "bold" }}
+                          onClick={() => navigate(`/perfil-cliente/${cliente.id}`)}
+                          title="Ver más">
+                          <i className="bi bi-eye"></i>
+                        </button>
+                        <button className="btn btn-sm"
+                          onClick={() => handleDeleteCliente(cliente.id)}
+                          style={{ background: "#b94a48", color: "#fffbe7", fontWeight: "bold" }}
+                          title="Eliminar">
+                          <i className="bi bi-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                )
+              ) : (
+                <tr>
+                  <td colSpan={3} className="text-center" style={{ color: "#6f4e37", background: "#f7ecd7" }}>
+                    <i className="bi bi-emoji-frown" style={{ fontSize: "1.2rem" }}></i> No hay clientes registrados.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
 }
+
 export default Clientes;
