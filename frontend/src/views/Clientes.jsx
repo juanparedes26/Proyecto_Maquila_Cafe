@@ -15,20 +15,29 @@ function Clientes() {
   const [editId, setEditId] = useState(null);
   const [editNombre, setEditNombre] = useState("");
   const [editCelular, setEditCelular] = useState("");
-  const [clientes, setClientes] = useState([]);
-
-  useEffect(() => {
+  const [isLoading, setIsLoading] = useState(true);
+/*const [clientes, setClientes] = useState([]);*/
+useEffect(() => {
+  const fetchClientes = async () => {
+    setIsLoading(true);
     if (store.token && typeof store.token === "string" && store.token.length > 0) {
-      actions.getClientes();
+      await actions.getClientes();
     } else {
       toast.error("Debes iniciar sesión para ver los clientes");
     }
-  }, [store.token]);
 
-  // Sincroniza el estado local con el store
-  useEffect(() => {
+  };
+  fetchClientes();
+}, [store.token]);
+useEffect(() => {
+  
+  setIsLoading(false);
+}, [store.clientes]);
+
+
+  /*useEffect(() => {
     setClientes(store.clientes);
-  }, [store.clientes]);
+  }, [store.clientes]);*/
 
   const handleAddCliente = async (e) => {
     e.preventDefault();
@@ -66,7 +75,7 @@ function Clientes() {
   };
 
   const handleUpdateCliente = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     const result = await actions.updateCliente(editId, { nombre: editNombre, celular: editCelular });
     if (result) {
       setEditId(null);
@@ -78,66 +87,76 @@ function Clientes() {
     }
   };
 
-  // Usar el estado local para filtrar y mostrar clientes
-  const clientesFiltrados = clientes
-    .filter(cliente =>
-      cliente.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-      cliente.celular.includes(busqueda)
-    )
-    .reverse()
-    .slice(0, 5);
+  
+const clientesFiltrados = Array.isArray(store.clientes)
+  ? store.clientes
+      .filter(cliente =>
+        cliente.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+        cliente.celular.includes(busqueda)
+      )
+      .reverse()
+      .slice(0, 5)
+  : [];
+return (
+  <div className="container py-4">
+    <h2 className="mb-4" style={{ color: "#6f4e37", fontWeight: "bold" }}>Clientes</h2>
+    <form className="mb-4 d-flex gap-2 align-items-center" onSubmit={handleAddCliente}>
+      <div className="input-group" style={{ maxWidth: "250px" }}>
+        <span className="input-group-text" style={{ background: "#c0a16b", color: "#fffbe7", fontWeight: "bold" }}>
+          <i className="bi bi-person"></i>
+        </span>
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Nombre"
+          value={nombre}
+          onChange={e => setNombre(e.target.value)}
+          required
+          style={{ borderColor: "#c0a16b", borderRadius: "0 8px 8px 0" }}
+        />
+      </div>
+      <div className="input-group" style={{ maxWidth: "200px" }}>
+        <span className="input-group-text" style={{ background: "#c0a16b", color: "#fffbe7", fontWeight: "bold" }}>
+          <i className="bi bi-phone"></i>
+        </span>
+        <input
+          type="number"
+          className="form-control"
+          placeholder="Celular"
+          value={celular}
+          onChange={e => setCelular(e.target.value)}
+          required
+          style={{ borderColor: "#c0a16b", borderRadius: "0 8px 8px 0" }}
+        />
+      </div>
+      <button type="submit" className="btn btn-lg" style={{ background: "#c0a16b", color: "#fffbe7", fontWeight: "bold", borderRadius: "8px" }}>
+        Agregar Cliente
+      </button>
+    </form>
 
-  return (
-    <div className="container py-4">
-      <h2 className="mb-4" style={{ color: "#6f4e37", fontWeight: "bold" }}>Clientes</h2>
-      <form className="mb-4 d-flex gap-2 align-items-center" onSubmit={handleAddCliente}>
-        <div className="input-group" style={{ maxWidth: "250px" }}>
-          <span className="input-group-text" style={{ background: "#c0a16b", color: "#fffbe7", fontWeight: "bold" }}>
-            <i className="bi bi-person"></i>
-          </span>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Nombre"
-            value={nombre}
-            onChange={e => setNombre(e.target.value)}
-            required
-            style={{ borderColor: "#c0a16b", borderRadius: "0 8px 8px 0" }}
-          />
+    <input
+      type="text"
+      className="form-control mb-3"
+      placeholder="Buscar por nombre o celular"
+      value={busqueda}
+      onChange={e => setBusqueda(e.target.value)}
+      style={{
+        maxWidth: "300px",
+        borderColor: "#6f4e37",
+        borderRadius: "8px",
+        boxShadow: "0 2px 8px rgba(192,161,107,0.1)"
+      }}
+    />
+
+
+    {isLoading || store.clientes === null? (
+      <div className="text-center my-5">
+        <div className="spinner-border" style={{ color: "#c0a16b", width: "3rem", height: "3rem" }} role="status">
+          <span className="visually-hidden">Cargando...</span>
         </div>
-        <div className="input-group" style={{ maxWidth: "200px" }}>
-          <span className="input-group-text" style={{ background: "#c0a16b", color: "#fffbe7", fontWeight: "bold" }}>
-            <i className="bi bi-phone"></i>
-          </span>
-          <input
-            type="number"
-            className="form-control"
-            placeholder="Celular"
-            value={celular}
-            onChange={e => setCelular(e.target.value)}
-            required
-            style={{ borderColor: "#c0a16b", borderRadius: "0 8px 8px 0" }}
-          />
-        </div>
-        <button type="submit" className="btn btn-lg" style={{ background: "#c0a16b", color: "#fffbe7", fontWeight: "bold", borderRadius: "8px" }}>
-          Agregar Cliente
-        </button>
-      </form>
-
-      <input
-        type="text"
-        className="form-control mb-3"
-        placeholder="Buscar por nombre o celular"
-        value={busqueda}
-        onChange={e => setBusqueda(e.target.value)}
-        style={{
-          maxWidth: "300px",
-          borderColor: "#6f4e37",
-          borderRadius: "8px",
-          boxShadow: "0 2px 8px rgba(192,161,107,0.1)"
-        }}
-      />
-
+        <div style={{ color: "#6f4e37", marginTop: "10px" }}>Cargando clientes...</div>
+      </div>
+    ) : (
       <div className="table-responsive">
         <table className="table align-middle" style={{ background: "#fffbe7", borderRadius: "12px", overflow: "hidden" }}>
           <thead style={{ background: "#6f4e37", color: "#fffbe7" }}>
@@ -169,7 +188,7 @@ function Clientes() {
                       />
                     </td>
                     <td>
-                      <button className="btn btn-sm me-2" style={{ background: "#6f4e37", color: "#fffbe7", fontWeight: "bold" }} onClick={handleUpdateCliente}>Guardar</button>
+                      <button   type="button" className="btn btn-sm me-2" style={{ background: "#6f4e37", color: "#fffbe7", fontWeight: "bold" }} onClick={handleUpdateCliente}>Guardar</button>
                       <button className="btn btn-sm" style={{ background: "#b94a48", color: "#fffbe7", fontWeight: "bold" }} onClick={() => setEditId(null)}>Cancelar</button>
                     </td>
                   </tr>
@@ -199,8 +218,8 @@ function Clientes() {
           </tbody>
         </table>
       </div>
-    </div>
-  );
+    )}
+  </div>
+);
 }
-
 export default Clientes;

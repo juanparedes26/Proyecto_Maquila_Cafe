@@ -3,6 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Context } from "../js/store/appContext.jsx";
 import { toast } from "react-toastify";
 import MaquilaFormModal from "../components/MaquilaFormModal.jsx";
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+const MySwal = withReactContent(Swal);
 
 function PerfilCliente() {
   const { id } = useParams();
@@ -32,7 +35,7 @@ function PerfilCliente() {
     fetchData();
   }, [id, actions, store.token, navigate]);
 
-  const handleAddMaquila = async (maquilaData) => {
+ /* const handleAddMaquila = async (maquilaData) => {
     const result = await actions.addMaquila(maquilaData);
     if (result) {
       toast.success("Maquila añadida correctamente");
@@ -42,7 +45,7 @@ function PerfilCliente() {
     } else {
       toast.error("Error al añadir la maquila");
     }
-  };
+  }*/
 
   const handleEditMaquila = (maquila) => {
     setEditMaquila(maquila);
@@ -66,13 +69,36 @@ function PerfilCliente() {
       toast.error("Error al guardar la maquila");
     }
   };
+ const handleDeleteMaquila = async (maquilaId) => {
+  const result = await MySwal.fire({
+    title: '¿Seguro que deseas eliminar esta maquila?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#b94a48',
+    cancelButtonColor: '#6f4e37',
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar'
+  });
 
-  // Ordena por fecha descendente (más reciente primero)
+  if (result.isConfirmed) {
+    const deleteResult = await actions.deleteMaquila(maquilaId);
+    if (deleteResult !== false) {
+
+      const m = await actions.getMaquilabyCliente(id);
+      setMaquilas(m);
+    } else {
+      toast.error("Error al eliminar la maquila");
+    }
+  }
+}
+
+
+
   const maquilasOrdenadas = [...maquilas].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
   const finalizadasAll = maquilasOrdenadas.filter(m => m.precio_total && m.precio_total > 0);
   const enProcesoAll = maquilasOrdenadas.filter(m => !m.precio_total || m.precio_total === 0);
 
-  // Solo muestra las primeras N, según el estado
+
   const finalizadas = finalizadasAll.slice(0, showFinalizadas);
   const enProceso = enProcesoAll.slice(0, showEnProceso);
 
@@ -80,7 +106,7 @@ function PerfilCliente() {
     <div className="container py-4">
       {cliente && (
         <>
-          <h1 style={{ color: "#6f4e37", fontWeight: "bold" }}>{cliente.nombre}</h1>
+          <h1 style={{ color: "#4b2e19", fontWeight: "bold" }}>{cliente.nombre}</h1>
           <h4 style={{ color: "#4b2e19" }}>{cliente.celular}</h4>
           <div className="d-flex align-items-center gap-3 mb-3">
             <button className="btn btn-success" onClick={() => { setShowMaquilaModal(true); setEditMaquila(null); }}>Añadir Maquila</button>
@@ -92,7 +118,21 @@ function PerfilCliente() {
             </button>
           </div>
 
-          <h5 className="mt-4">Maquilas en proceso</h5>
+        <h5
+                style={{
+                color: "#4b2e19",
+                fontWeight: "bold",
+                fontSize: "2rem",
+                fontFamily: "'Segoe UI', 'Arial', sans-serif",
+                letterSpacing: "1px",
+                margin: 0,
+                display: "flex",
+                alignItems: "center",
+                gap: "8px"
+                }}
+            >
+                 Maquilas en proceso ⏳
+            </h5>
           <div className="table-responsive">
             <table className="table align-middle">
               <thead>
@@ -122,7 +162,7 @@ function PerfilCliente() {
                     <td>{maquila.cantidad_libras || "-"}</td>
                     <td>{maquila.observaciones || "-"}</td>
                     <td>
-                      <span className="badge bg-warning text-dark">
+                      <span className="badge bg-primary">
                         <i className="bi bi-hourglass-split"></i> En proceso
                       </span>
                     </td>
@@ -130,12 +170,21 @@ function PerfilCliente() {
                       <i className="bi bi-hourglass-split"></i>
                     </td>
                     <td>
-                      <button
-                        className="btn btn-warning btn-sm"
-                        onClick={() => handleEditMaquila(maquila)}
-                      >
-                        Editar
-                      </button>
+                     <div className="d-flex flex-column gap-2">
+                        <button
+                            className="btn btn-sm"
+                            style={{ background: "#6f4e37", color: "#fffbe7", fontWeight: "bold" }}
+                            onClick={() => handleEditMaquila(maquila)}
+                            >
+                            Editar
+                        </button>
+                        <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => handleDeleteMaquila(maquila.id)}
+                        >
+                        Eliminar
+                        </button>
+                    </div>
                     </td>
                   </tr>
                 ))}
@@ -150,7 +199,21 @@ function PerfilCliente() {
             )}
           </div>
 
-          <h5 className="mt-4">Maquilas finalizadas</h5>
+                <h5
+                style={{
+                color: "#4b2e19",
+                fontWeight: "bold",
+                fontSize: "2rem",
+                fontFamily: "'Segoe UI', 'Arial', sans-serif",
+                letterSpacing: "1px",
+                margin: 0,
+                display: "flex",
+                alignItems: "center",
+                gap: "8px"
+                }}
+            >
+                 Maquilas finalizadas✅
+            </h5>
           <div className="table-responsive">
             <table className="table align-middle">
               <thead>
@@ -187,11 +250,11 @@ function PerfilCliente() {
                     </td>
                     <td>
                       <button
-                        className="btn btn-warning btn-sm"
-                        onClick={() => handleEditMaquila(maquila)}
-                      >
-                        Editar
-                      </button>
+                        className="btn btn-danger btn-sm"
+                        onClick={() => handleDeleteMaquila(maquila.id)}
+                        >
+                        Eliminar
+                        </button>
                     </td>
                   </tr>
                 ))}

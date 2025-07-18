@@ -14,7 +14,7 @@ const getState = ({ getStore, setStore }) => {
 			users: [], // Lista de usuarios que viene de register , en mi caso serian los admins
 			token: initialToken, // Token de autenticación
 			currentUser: null ,// Usuario actual que ha iniciado sesión
-			clientes: [], // Lista de clientes que se obtienen al hacer getClientes
+			clientes: null, // Lista de clientes que se obtienen al hacer getClientes
 			maquilas: [], // Lista de maquilas que se obtienen al hacer getMaquilas
 
 		},
@@ -105,11 +105,12 @@ const getState = ({ getStore, setStore }) => {
 						},
 						body: JSON.stringify(cliente)
 					});
-					const data = await res.json();
+					/*const data = await res.json();*/
 					if (res.ok) {
+					
 						return true;
 				
-						 toast.success('Cliente agregado exitosamente');
+					
 					} else {
 					 toast.error('No se pudo agregar el cliente');
 					 return false;
@@ -224,10 +225,12 @@ const getState = ({ getStore, setStore }) => {
 						 toast.success('Cliente actualizado exitosamente');
 
 						setStore({
-							clientes: store.clientes.map(c =>
-								c.id === clienteId ? { ...c, ...datos } : c
-							)
-						});
+							clientes: Array.isArray(store.clientes)
+								? store.clientes.map(c =>
+									c.id === clienteId ? { ...c, ...datos } : c
+								)
+								: []
+							});
 						return data;
 					} else {
 						 toast.error('Error al actualizar cliente: ' + (data.error || 'No se pudo actualizar el cliente'));
@@ -255,9 +258,11 @@ const getState = ({ getStore, setStore }) => {
 					if (res.ok) {
 						 toast.success('Cliente eliminado exitosamente');
 						setStore({
-							clientes: store.clientes.filter(c => c.id !== clienteId)
-						});
-					} else {
+							clientes: Array.isArray(store.clientes)
+								? store.clientes.filter(c => c.id !== clienteId)
+								: []
+							});
+						} else {
 						const data = await res.json();
 						toast.error('Error al eliminar cliente: ' + (data.error || 'No se pudo eliminar el cliente'));
 					}
@@ -282,8 +287,10 @@ const getState = ({ getStore, setStore }) => {
 					if (res.ok) {
 						toast.success('Maquila eliminada exitosamente');
 						setStore({
-							maquilas: store.maquilas.filter(m => m.id !== maquilaId)
-						});
+							maquilas: Array.isArray(store.maquilas)
+								? store.maquilas.filter(m => m.id !== maquilaId)
+								: []
+							});
 					} else {
 						const data = await res.json();
 						toast.error('Error al eliminar maquila: ' + (data.error || 'No se pudo eliminar la maquila'));	
@@ -312,10 +319,12 @@ const getState = ({ getStore, setStore }) => {
 							
 								
 								setStore({
-									maquilas: store.maquilas.map(m =>
-										m.id === maquilaId ? { ...m, ...datos } : m
-									)
-								});
+									maquilas: Array.isArray(store.maquilas)
+										? store.maquilas.map(m =>
+											m.id === maquilaId ? { ...m, ...datos } : m
+										)
+										: []
+});
 								return data;
 								
 							} else {

@@ -18,7 +18,7 @@ const Layout = () => {
         <div className="d-flex flex-column min-vh-100" style={{ margin: 0, padding: 0 }}>
             <BrowserRouter>
                 <Navbar />
-                <ToastContainer position="top-right" autoClose={2000} />
+                <ToastContainer position="top-right" autoClose={1000} />
                 <div className="flex-grow-1 w-100" style={{ margin: 0, padding: 0 }}>
                     <Routes>
                         <Route exact path='/' element={<Home />} />
