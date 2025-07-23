@@ -28,6 +28,7 @@ const getState = ({ getStore, setStore }) => {
 			
 			login:async(username,password)=>{
 				try {
+					const store = getStore();
 					const res=await fetch(`${backendUrl}/login`,{
 						method: "POST",
 						headers:{
@@ -41,7 +42,8 @@ const getState = ({ getStore, setStore }) => {
 					const data=await res.json();
 					if(res.ok && data.access_token){
 					 toast.success('Login exitoso');
-						  setStore({
+						  setStore({ 
+							...store,
 							token: data.access_token,
 							currentUser: data.user
 						});
@@ -62,10 +64,12 @@ const getState = ({ getStore, setStore }) => {
 				}
 			},
 			logout: () => {
+				 const store = getStore();
 
 				localStorage.removeItem("token");
 				localStorage.removeItem("currentUser");
 				setStore({
+					...store,
 					token: null,
 					currentUser: null
 				});
@@ -88,6 +92,7 @@ const getState = ({ getStore, setStore }) => {
 						setStore({ ...store, clientes: data });
 						return true;
 					} else {
+						 setStore({ ...store, clientes: [] });
 						toast.error(data.error || 'No se pudieron obtener los clientes');
 						return false;
 					}
@@ -134,7 +139,7 @@ const getState = ({ getStore, setStore }) => {
 					});
 					const data = await res.json();
 					if (res.ok) {
-						setStore({ maquilas: data });
+						setStore({ ...store, maquilas: data });
 					} else {
 						MySwal.fire({
 							icon: 'error',
@@ -165,7 +170,7 @@ const getState = ({ getStore, setStore }) => {
 					});
 					const data = await res.json();
 					if (res.ok) {
-						setStore({ maquilas: [...store.maquilas, data] });
+						  setStore({ ...store, maquilas: [...store.maquilas, data] });
 
 						return true;
 					} else {
@@ -193,7 +198,7 @@ const getState = ({ getStore, setStore }) => {
 					const data = await res.json();
 					if (res.ok) {
 						
-					    setStore({ maquilas: data });
+					      setStore({ ...store, maquilas: data });
 						return data;
 					} else {
 						MySwal.fire({
@@ -224,17 +229,22 @@ const getState = ({ getStore, setStore }) => {
 						body: JSON.stringify(datos) 
 					});
 					const data = await res.json();
-					if (res.ok) {
-						 toast.success('Cliente actualizado exitosamente');
-
+				if (res.ok) {
+						toast.success('Cliente actualizado exitosamente');
+						const clientesActualizados = Array.isArray(store.clientes)
+							? store.clientes.map(c =>
+								c.id === clienteId
+								? { ...c, ...datos }
+								: c
+							)
+							: [];
 						setStore({
-							clientes: Array.isArray(store.clientes)
-								? store.clientes.map(c =>
-									c.id === clienteId ? { ...c, ...datos } : c
-								)
-								: []
-							});
-						return data;
+							...store,
+							clientes: clientesActualizados
+						});
+						console.log("Clientes después de editar:", clientesActualizados);
+						return true;
+						
 					} else {
 						 toast.error('Error al actualizar cliente: ' + (data.error || 'No se pudo actualizar el cliente'));
 						return null;
@@ -258,14 +268,15 @@ const getState = ({ getStore, setStore }) => {
 							"Authorization": "Bearer " + store.token
 						}
 					});
-					if (res.ok) {
-						 toast.success('Cliente eliminado exitosamente');
+				if (res.ok) {
+						toast.success('Cliente eliminado exitosamente');
 						setStore({
+							...store,
 							clientes: Array.isArray(store.clientes)
-								? store.clientes.filter(c => c.id !== clienteId)
-								: []
-							});
-						} else {
+							? store.clientes.filter(c => c.id !== clienteId)
+							: []
+						});
+					} else {
 						const data = await res.json();
 						toast.error('Error al eliminar cliente: ' + (data.error || 'No se pudo eliminar el cliente'));
 					}
@@ -290,7 +301,8 @@ const getState = ({ getStore, setStore }) => {
 					if (res.ok) {
 						toast.success('Maquila eliminada exitosamente');
 						setStore({
-							maquilas: Array.isArray(store.maquilas)
+								...store,
+								maquilas: Array.isArray(store.maquilas)
 								? store.maquilas.filter(m => m.id !== maquilaId)
 								: []
 							});
@@ -322,13 +334,14 @@ const getState = ({ getStore, setStore }) => {
 							
 								
 								setStore({
-									maquilas: Array.isArray(store.maquilas)
+										...store,
+										maquilas: Array.isArray(store.maquilas)
 										? store.maquilas.map(m =>
 											m.id === maquilaId ? { ...m, ...datos } : m
-										)
+											)
 										: []
-});
-								return data;
+									});
+											return data;
 								
 							} else {
 								toast.error('Error al actualizar maquila: ' + (data.error || 'No se pudo actualizar la maquila'));

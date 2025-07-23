@@ -7,7 +7,6 @@ const MySwal = withReactContent(Swal);
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
-
 function Clientes() {
   const navigate = useNavigate();
   const { store, actions } = useContext(Context);
@@ -19,59 +18,47 @@ function Clientes() {
   const [editCelular, setEditCelular] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
-
-
 useEffect(() => {
-  const fetchClientes = async () => {
-    if (!store.token || typeof store.token !== "string" || store.token.length === 0) {
-      setIsLoading(false);
-      return;
-    }
-
-    setIsLoading(true);
-    const success = await actions.getClientes();
-    if (!success) {
-      console.warn("Error al obtener clientes");
-    }
+  if (!store.token || typeof store.token !== "string" || store.token.length === 0) {
     setIsLoading(false);
-  };
-
-
-  if (location.pathname === "/clientes") {
-    fetchClientes();
+    return;
   }
-}, [store.token, location.pathname]); // 👈 se vuelve a ejecutar al volver
+  setIsLoading(true);
+  actions.getClientes().finally(() => setIsLoading(false));
+}, [store.token, location.pathname]);
 
+ const handleAddCliente = async (e) => {
+  e.preventDefault();
+  const nuevoCliente = { nombre, celular };
+  const result = await actions.addCliente(nuevoCliente);
+  if (result) {
+    toast.success("Cliente agregado");
+    setNombre("");
+    setCelular("");
+    setIsLoading(true);
+    await actions.getClientes();
+    setIsLoading(false);
+  }
+};
 
-
-  const handleAddCliente = async (e) => {
-    e.preventDefault();
-    const nuevoCliente = { nombre, celular };
-    const result = await actions.addCliente(nuevoCliente);
-    if (result) {
-      toast.success("Cliente agregado");
-      setNombre("");
-      setCelular("");
-      setTimeout(() => actions.getClientes(), 500);
+ const handleDeleteCliente = async (clienteId) => {
+  MySwal.fire({
+    title: '¿Seguro que deseas eliminar este cliente?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#b94a48',
+    cancelButtonColor: '#6f4e37',
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar'
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      await actions.deleteCliente(clienteId);
+      setIsLoading(true);
+      await actions.getClientes();
+      setIsLoading(false);
     }
-  };
-
-  const handleDeleteCliente = async (clienteId) => {
-    MySwal.fire({
-      title: '¿Seguro que deseas eliminar este cliente?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#b94a48',
-      cancelButtonColor: '#6f4e37',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar'
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        await actions.deleteCliente(clienteId);
-        setTimeout(() => actions.getClientes(), 500);
-      }
-    });
-  };
+  });
+};
 
   const startEditCliente = (cliente) => {
     setEditId(cliente.id);
@@ -80,17 +67,19 @@ useEffect(() => {
   };
 
   const handleUpdateCliente = async (e) => {
-    if (e) e.preventDefault();
-    const result = await actions.updateCliente(editId, { nombre: editNombre, celular: editCelular });
-    if (result) {
-      setEditId(null);
-      setEditNombre("");
-      setEditCelular("");
-      setTimeout(() => actions.getClientes(), 500);
-    } else {
-      toast.error("No se pudo actualizar el cliente");
-    }
-  };
+  if (e) e.preventDefault();
+  const result = await actions.updateCliente(editId, { nombre: editNombre, celular: editCelular });
+  if (result) {
+    setEditId(null);
+    setEditNombre("");
+    setEditCelular("");
+    setIsLoading(true);
+    await actions.getClientes();
+    setIsLoading(false);
+  } else {
+    toast.error("No se pudo actualizar el cliente");
+  }
+};
 
   const clientesFiltrados = Array.isArray(store.clientes)
     ? store.clientes
@@ -163,7 +152,7 @@ useEffect(() => {
         </div>
       </div>
 
-      {isLoading || store.clientes === null ? (
+      {isLoading ? (
         <div className="text-center my-5">
           <div className="spinner-border" style={{ color: "#c0a16b", width: "3rem", height: "3rem" }} role="status">
             <span className="visually-hidden">Cargando...</span>

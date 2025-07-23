@@ -219,7 +219,8 @@ def get_maquilas():
                 'detalle_precio': maquila.detalle_precio,
                 'observaciones': maquila.observaciones,
                 'cantidad_libras': maquila.cantidad_libras,
-                'precio_unitario_empaque': maquila.precio_unitario_empaque
+                'precio_unitario_empaque': maquila.precio_unitario_empaque,
+                'finalizada': maquila.finalizada
 
             }
             maquila_list.append(maquila_dict)
@@ -248,7 +249,8 @@ def get_maquila(maquila_id):
         'nombre_cliente': maquila.cliente.nombre if maquila.cliente else None,
         'celular_cliente': maquila.cliente.celular if maquila.cliente else None,
         'cantidad_libras': maquila.cantidad_libras,
-        'precio_unitario_empaque': maquila.precio_unitario_empaque
+        'precio_unitario_empaque': maquila.precio_unitario_empaque,
+        'finalizada': maquila.finalizada
     }
     return jsonify(maquila_dict), 200
     
@@ -282,6 +284,7 @@ def get_maquilas_by_cliente(cliente_id):
         'observaciones': m.observaciones,
         'cantidad_libras': m.cantidad_libras,
         'precio_unitario_empaque': m.precio_unitario_empaque,
+        'finalizada': m.finalizada
     } for m in maquilas]
     return jsonify(maquila_list), 200
 
@@ -312,6 +315,7 @@ def format_cop(value):
 @jwt_required()
 def update_maquila(maquila_id):
     maquila = Maquila.query.get_or_404(maquila_id)
+    data = request.get_json()
 
     # Actualiza los campos recibidos
     for field in [
@@ -361,6 +365,8 @@ def update_maquila(maquila_id):
 
     maquila.precio_total = int(precio_total)
     maquila.detalle_precio = " | ".join(detalle)
+    if 'finalizada' in data:
+        maquila.finalizada = bool(data['finalizada'])
 
     db.session.commit()
 
@@ -368,7 +374,8 @@ def update_maquila(maquila_id):
         'message': 'Maquila actualizada',
         'precio_total': maquila.precio_total,
         'precio_total_str': format_cop(maquila.precio_total),
-        'detalle_precio': maquila.detalle_precio
+        'detalle_precio': maquila.detalle_precio,
+        'finalizada': maquila.finalizada,
     }), 200
 
 @admin_bp.route("/maquilas/<int:maquila_id>", methods=["DELETE"])
