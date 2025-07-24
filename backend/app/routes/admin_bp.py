@@ -338,7 +338,20 @@ def update_maquila(maquila_id):
     ]:
         value = data.get(field)
         if value is not None:
-            setattr(maquila, field, value)
+            # Conversión segura para peso_granel
+            if field == 'peso_granel':
+                try:
+                    setattr(maquila, field, float(value))
+                except (ValueError, TypeError):
+                    setattr(maquila, field, 0)
+            # Conversión segura para cantidad_libras y precio_unitario_empaque
+            elif field in ['cantidad_libras', 'precio_unitario_empaque', 'peso_kg', 'peso_despues_trilla_kg', 'porcentaje_merma']:
+                try:
+                    setattr(maquila, field, float(value))
+                except (ValueError, TypeError):
+                    setattr(maquila, field, 0)
+            else:
+                setattr(maquila, field, value)
 
     # --- CÁLCULO DE PRECIO MIXTO ---
     precio_total = 0
