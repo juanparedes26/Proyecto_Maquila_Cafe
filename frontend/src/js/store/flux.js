@@ -92,7 +92,7 @@ const getState = ({ getStore, setStore }) => {
 						setStore({ ...store, clientes: data });
 						return true;
 					} else {
-						 setStore({ ...store, clientes: [] });
+						 /*setStore({ ...store, clientes: [] });*/
 						toast.error(data.error || 'No se pudieron obtener los clientes');
 						return false;
 					}

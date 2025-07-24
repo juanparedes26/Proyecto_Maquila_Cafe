@@ -53,6 +53,7 @@ function PerfilCliente() {
       setShowMaquilaModal(false);
       setEditMaquila(null);
       const m = await actions.getMaquilabyCliente(id);
+      await actions.getClientes();
       setMaquilas(m);
     } else {
       toast.error("Error al guardar la maquila");
@@ -74,6 +75,7 @@ function PerfilCliente() {
       const deleteResult = await actions.deleteMaquila(maquilaId);
       if (deleteResult !== false) {
         const m = await actions.getMaquilabyCliente(id);
+        await actions.getClientes(); 
         setMaquilas(m);
       } else {
         toast.error("Error al eliminar la maquila");
@@ -87,6 +89,7 @@ function PerfilCliente() {
     if (result) {
       toast.success("Maquila finalizada");
       const m = await actions.getMaquilabyCliente(id);
+      await actions.getClientes(); 
       setMaquilas(m);
     } else {
       toast.error("No se pudo finalizar la maquila");
@@ -101,7 +104,6 @@ function PerfilCliente() {
   const finalizadas = finalizadasAll.slice(0, showFinalizadas);
   const enProceso = enProcesoAll.slice(0, showEnProceso);
 
-  // Botón acorde a la paleta, igual que los otros (sin borderRadius extra)
   const finalizarBtnStyle = {
     background: "#c0a16b",
     color: "#fffbe7",
@@ -159,6 +161,7 @@ function PerfilCliente() {
                   <th>Grado de tostión</th>
                   <th>Tipo de empaque</th>
                   <th>Cant. libras</th>
+                  <th>Peso granel (kg)</th>
                   <th>Observaciones</th>
                   <th>Estado</th>
                   <th>Precio</th>
@@ -175,6 +178,7 @@ function PerfilCliente() {
                     <td>{maquila.grado_tostion}</td>
                     <td>{maquila.tipo_empaque}</td>
                     <td>{maquila.cantidad_libras || "-"}</td>
+                    <td>{maquila.peso_granel > 0 ? maquila.peso_granel : "-"}</td>
                     <td>{maquila.observaciones || "-"}</td>
                     <td>
                       <span className="badge d-flex align-items-center gap-2" style={{ background: "#c0a16b", color: "#4b2e19", fontWeight: "bold" }}>
@@ -262,6 +266,7 @@ function PerfilCliente() {
                   <th>Grado de tostión</th>
                   <th>Tipo de empaque</th>
                   <th>Cant. libras</th>
+                  <th>Peso granel (kg)</th>
                   <th>Observaciones</th>
                   <th>Estado</th>
                   <th>Precio</th>
@@ -278,6 +283,7 @@ function PerfilCliente() {
                     <td>{maquila.grado_tostion}</td>
                     <td>{maquila.tipo_empaque}</td>
                     <td>{maquila.cantidad_libras || "-"}</td>
+                    <td>{maquila.peso_granel > 0 ? maquila.peso_granel : "-"}</td>
                     <td>{maquila.observaciones || "-"}</td>
                     <td>
                       <span className="badge bg-success">Finalizado</span>

@@ -40,6 +40,7 @@ class Maquila(db.Model):
     cantidad_libras = db.Column(db.Float, nullable=True) 
     precio_unitario_empaque = db.Column(db.Integer, nullable=True)
     finalizada = db.Column(db.Boolean, default=False)
+    peso_granel = db.Column(db.Float, nullable=True, default=0)
 
     cliente_id = db.Column(db.Integer, db.ForeignKey("clientes.id"))
     cliente = db.relationship("Cliente", back_populates="maquilas")

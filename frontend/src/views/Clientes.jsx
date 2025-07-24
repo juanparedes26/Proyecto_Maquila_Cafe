@@ -27,6 +27,17 @@ useEffect(() => {
   actions.getClientes().finally(() => setIsLoading(false));
 }, [store.token, location.pathname]);
 
+
+useEffect(() => {
+  if (
+    store.token &&
+    (store.clientes === null || (Array.isArray(store.clientes) && store.clientes.length === 0))
+  ) {
+    setIsLoading(true);
+    actions.getClientes().finally(() => setIsLoading(false));
+  }
+}, [store.clientes, store.token]);
+
  const handleAddCliente = async (e) => {
   e.preventDefault();
   const nuevoCliente = { nombre, celular };

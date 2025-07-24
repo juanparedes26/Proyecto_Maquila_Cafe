@@ -11,6 +11,7 @@ function MaquilaFormModal({ show, onClose, onSubmit, cliente, maquila }) {
   const [peso_despues_trilla_kg, setPesoDespuesTrillaKg] = useState("");
   const [cobra_empaque, setCobraEmpaque] = useState(false);
   const [precio_unitario_empaque, setPrecioUnitarioEmpaque] = useState("");
+  const [peso_granel, setPesoGranel] = useState(""); // <-- NUEVO CAMPO
 
   useEffect(() => {
     if (maquila) {
@@ -23,6 +24,7 @@ function MaquilaFormModal({ show, onClose, onSubmit, cliente, maquila }) {
       setPesoDespuesTrillaKg(maquila.peso_despues_trilla_kg || "");
       setCobraEmpaque(!!maquila.precio_unitario_empaque);
       setPrecioUnitarioEmpaque(maquila.precio_unitario_empaque || "");
+      setPesoGranel(maquila.peso_granel || ""); // <-- NUEVO CAMPO
     } else {
       setPesoKg("");
       setEstaTrillado(false);
@@ -33,6 +35,7 @@ function MaquilaFormModal({ show, onClose, onSubmit, cliente, maquila }) {
       setPesoDespuesTrillaKg("");
       setCobraEmpaque(false);
       setPrecioUnitarioEmpaque("");
+      setPesoGranel(""); // <-- NUEVO CAMPO
     }
   }, [maquila, show]);
 
@@ -62,6 +65,10 @@ function MaquilaFormModal({ show, onClose, onSubmit, cliente, maquila }) {
         maquilaData.precio_unitario_empaque = precio_unitario_empaque;
       }
     }
+    // Agregar peso_granel si es mayor a 0
+    if (peso_granel && Number(peso_granel) > 0) {
+      maquilaData.peso_granel = peso_granel;
+    }
     await onSubmit(maquilaData);
     setPesoKg("");
     setEstaTrillado(false);
@@ -72,6 +79,7 @@ function MaquilaFormModal({ show, onClose, onSubmit, cliente, maquila }) {
     setPesoDespuesTrillaKg("");
     setCobraEmpaque(false);
     setPrecioUnitarioEmpaque("");
+    setPesoGranel("");
     onClose();
   };
 
@@ -196,6 +204,20 @@ function MaquilaFormModal({ show, onClose, onSubmit, cliente, maquila }) {
               )}
             </>
           )}
+          {/* CAMPO PARA PESO A GRANEL */}
+          <div className="mb-3">
+            <label className="form-label fw-bold" style={{ color: "#4b2e19" }}>
+              <i className="bi bi-box-seam"></i> Peso a granel (kg)
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              placeholder="Ej: 20"
+              value={peso_granel}
+              onChange={e => setPesoGranel(e.target.value)}
+              min={0}
+            />
+          </div>
           <div className="mb-3">
             <label className="form-label fw-bold" style={{ color: "#4b2e19" }}>
               <i className="bi bi-chat-left-text"></i> Observaciones (opcional)

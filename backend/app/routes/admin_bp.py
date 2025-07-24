@@ -148,6 +148,12 @@ def create_maquila():
         observaciones = request.json.get('observaciones')
         cantidad_libras = request.json.get('cantidad_libras')
         precio_unitario_empaque = request.json.get('precio_unitario_empaque')
+        peso_granel = request.json.get('peso_granel', 0)
+
+
+
+    
+
 
         if not cliente_id or not peso_kg:
             return jsonify({'error': 'Cliente ID and Peso KG are required.'}), 400
@@ -164,8 +170,10 @@ def create_maquila():
             detalle_precio=detalle_precio,
             observaciones=observaciones,
             cantidad_libras=cantidad_libras,
-             precio_unitario_empaque=precio_unitario_empaque)
-        
+            precio_unitario_empaque=precio_unitario_empaque,
+            peso_granel=peso_granel
+        )
+
         db.session.add(new_maquila)
         db.session.commit()
 
@@ -185,7 +193,8 @@ def create_maquila():
             'nombre_cliente': new_maquila.cliente.nombre if new_maquila.cliente else None,
             'celular_cliente': new_maquila.cliente.celular if new_maquila.cliente else None,
             'cantidad_libras': new_maquila.cantidad_libras, 
-            'precio_unitario_empaque': new_maquila.precio_unitario_empaque
+            'precio_unitario_empaque': new_maquila.precio_unitario_empaque,
+            'peso_granel': new_maquila.peso_granel  
         }), 201
 
     except Exception as e:
@@ -220,7 +229,8 @@ def get_maquilas():
                 'observaciones': maquila.observaciones,
                 'cantidad_libras': maquila.cantidad_libras,
                 'precio_unitario_empaque': maquila.precio_unitario_empaque,
-                'finalizada': maquila.finalizada
+                'finalizada': maquila.finalizada,
+                'peso_granel': maquila.peso_granel
 
             }
             maquila_list.append(maquila_dict)
@@ -250,7 +260,8 @@ def get_maquila(maquila_id):
         'celular_cliente': maquila.cliente.celular if maquila.cliente else None,
         'cantidad_libras': maquila.cantidad_libras,
         'precio_unitario_empaque': maquila.precio_unitario_empaque,
-        'finalizada': maquila.finalizada
+        'finalizada': maquila.finalizada,
+        'peso_granel': maquila.peso_granel
     }
     return jsonify(maquila_dict), 200
     
@@ -284,7 +295,8 @@ def get_maquilas_by_cliente(cliente_id):
         'observaciones': m.observaciones,
         'cantidad_libras': m.cantidad_libras,
         'precio_unitario_empaque': m.precio_unitario_empaque,
-        'finalizada': m.finalizada
+        'finalizada': m.finalizada,
+        'peso_granel': m.peso_granel
     } for m in maquilas]
     return jsonify(maquila_list), 200
 
@@ -311,6 +323,7 @@ def format_cop(value):
         return "${:,.0f} COP".format(int(value))
     except Exception:
         return "$0 COP"
+    
 @admin_bp.route("/maquilas/<int:maquila_id>", methods=["PUT"])
 @jwt_required()
 def update_maquila(maquila_id):
@@ -321,13 +334,13 @@ def update_maquila(maquila_id):
     for field in [
         'peso_kg', 'esta_trillado', 'peso_despues_trilla_kg', 'grado_tostion',
         'tipo_empaque', 'porcentaje_merma', 'detalle_precio', 'observaciones',
-        'cantidad_libras', 'precio_unitario_empaque'
+        'cantidad_libras', 'precio_unitario_empaque', 'peso_granel'
     ]:
-        value = request.json.get(field)
+        value = data.get(field)
         if value is not None:
             setattr(maquila, field, value)
 
-    # --- CÁLCULO DE PRECIO ---
+    # --- CÁLCULO DE PRECIO MIXTO ---
     precio_total = 0
     detalle = []
 
@@ -337,31 +350,25 @@ def update_maquila(maquila_id):
         precio_trilla = (float(maquila.peso_kg) if maquila.peso_kg else 0) * 700
         detalle.append(f"Trilla: {maquila.peso_kg}kg x $700 = ${int(precio_trilla)}")
 
-    # Empaque
-    if maquila.tipo_empaque and maquila.tipo_empaque.lower() in ["libras", "libra"]:
-        # Libras
-        cantidad_libras = int(maquila.cantidad_libras) if maquila.cantidad_libras else 0
-        precio_libras = cantidad_libras * 3000
-        detalle.append(f"Libras: {cantidad_libras} x $3000 = ${precio_libras}")
+    # MIXTO: Granel + Libras empacadas
+    precio_granel = 0
+    precio_libras = 0
+    precio_empaque = 0
 
-        # Empaque (si se cobra)
-        precio_empaque = 0
+    # Granel
+    if maquila.peso_granel and maquila.peso_granel > 0:
+        precio_granel = float(maquila.peso_granel) * 3000
+        detalle.append(f"Granel: {maquila.peso_granel}kg x $3000 = ${int(precio_granel)}")
+
+    # Libras empacadas
+    if maquila.cantidad_libras and maquila.cantidad_libras > 0:
+        precio_libras = int(maquila.cantidad_libras) * 3000
+        detalle.append(f"Libras empacadas: {int(maquila.cantidad_libras)} x $3000 = ${precio_libras}")
         if maquila.precio_unitario_empaque:
-            precio_empaque = cantidad_libras * int(maquila.precio_unitario_empaque)
-            detalle.append(f"Empaque: {cantidad_libras} x ${int(maquila.precio_unitario_empaque)} = ${precio_empaque}")
+            precio_empaque = int(maquila.cantidad_libras) * int(maquila.precio_unitario_empaque)
+            detalle.append(f"Empaque: {int(maquila.cantidad_libras)} x ${int(maquila.precio_unitario_empaque)} = ${precio_empaque}")
 
-        precio_total = precio_libras + precio_empaque + precio_trilla
-
-    elif maquila.tipo_empaque and maquila.tipo_empaque.lower() == "granel":
-        # Granel
-        if maquila.esta_trillado:
-            precio_granel = (float(maquila.peso_kg) if maquila.peso_kg else 0) * 3000
-            detalle.append(f"Granel trillado: {maquila.peso_kg}kg x $3000 = ${int(precio_granel)}")
-        else:
-            precio_granel = (float(maquila.peso_despues_trilla_kg) if maquila.peso_despues_trilla_kg else 0) * 3000
-            detalle.append(f"Granel sin trillar: {maquila.peso_despues_trilla_kg}kg x $3000 = ${int(precio_granel)}")
-        precio_total = precio_granel + precio_trilla
-
+    precio_total = precio_granel + precio_libras + precio_empaque + precio_trilla
 
     maquila.precio_total = int(precio_total)
     maquila.detalle_precio = " | ".join(detalle)
@@ -377,7 +384,6 @@ def update_maquila(maquila_id):
         'detalle_precio': maquila.detalle_precio,
         'finalizada': maquila.finalizada,
     }), 200
-
 @admin_bp.route("/maquilas/<int:maquila_id>", methods=["DELETE"])
 @jwt_required()
 def delete_maquila(maquila_id):
