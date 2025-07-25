@@ -18,58 +18,58 @@ function Clientes() {
   const [editCelular, setEditCelular] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
-useEffect(() => {
-  if (!store.token || typeof store.token !== "string" || store.token.length === 0) {
-    setIsLoading(false);
-    return;
-  }
-  setIsLoading(true);
-  actions.getClientes().finally(() => setIsLoading(false));
-}, [store.token, location.pathname]);
 
-
-useEffect(() => {
-  if (
-    store.token &&
-    (store.clientes === null || (Array.isArray(store.clientes) && store.clientes.length === 0))
-  ) {
+  useEffect(() => {
+    if (!store.token || typeof store.token !== "string" || store.token.length === 0) {
+      setIsLoading(false);
+      return;
+    }
     setIsLoading(true);
     actions.getClientes().finally(() => setIsLoading(false));
-  }
-}, [store.clientes, store.token]);
+  }, [store.token, location.pathname]);
 
- const handleAddCliente = async (e) => {
-  e.preventDefault();
-  const nuevoCliente = { nombre, celular };
-  const result = await actions.addCliente(nuevoCliente);
-  if (result) {
-    toast.success("Cliente agregado");
-    setNombre("");
-    setCelular("");
-    setIsLoading(true);
-    await actions.getClientes();
-    setIsLoading(false);
-  }
-};
+  useEffect(() => {
+    if (
+      store.token &&
+      (store.clientes === null || (Array.isArray(store.clientes) && store.clientes.length === 0))
+    ) {
+      setIsLoading(true);
+      actions.getClientes().finally(() => setIsLoading(false));
+    }
+  }, [store.clientes, store.token]);
 
- const handleDeleteCliente = async (clienteId) => {
-  MySwal.fire({
-    title: '¿Seguro que deseas eliminar este cliente?',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#b94a48',
-    cancelButtonColor: '#6f4e37',
-    confirmButtonText: 'Sí, eliminar',
-    cancelButtonText: 'Cancelar'
-  }).then(async (result) => {
-    if (result.isConfirmed) {
-      await actions.deleteCliente(clienteId);
+  const handleAddCliente = async (e) => {
+    e.preventDefault();
+    const nuevoCliente = { nombre, celular };
+    const result = await actions.addCliente(nuevoCliente);
+    if (result) {
+      toast.success("Cliente agregado");
+      setNombre("");
+      setCelular("");
       setIsLoading(true);
       await actions.getClientes();
       setIsLoading(false);
     }
-  });
-};
+  };
+
+  const handleDeleteCliente = async (clienteId) => {
+    MySwal.fire({
+      title: '¿Seguro que deseas eliminar este cliente?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#b94a48',
+      cancelButtonColor: '#6f4e37',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await actions.deleteCliente(clienteId);
+        setIsLoading(true);
+        await actions.getClientes();
+        setIsLoading(false);
+      }
+    });
+  };
 
   const startEditCliente = (cliente) => {
     setEditId(cliente.id);
@@ -78,19 +78,19 @@ useEffect(() => {
   };
 
   const handleUpdateCliente = async (e) => {
-  if (e) e.preventDefault();
-  const result = await actions.updateCliente(editId, { nombre: editNombre, celular: editCelular });
-  if (result) {
-    setEditId(null);
-    setEditNombre("");
-    setEditCelular("");
-    setIsLoading(true);
-    await actions.getClientes();
-    setIsLoading(false);
-  } else {
-    toast.error("No se pudo actualizar el cliente");
-  }
-};
+    if (e) e.preventDefault();
+    const result = await actions.updateCliente(editId, { nombre: editNombre, celular: editCelular });
+    if (result) {
+      setEditId(null);
+      setEditNombre("");
+      setEditCelular("");
+      setIsLoading(true);
+      await actions.getClientes();
+      setIsLoading(false);
+    } else {
+      toast.error("No se pudo actualizar el cliente");
+    }
+  };
 
   const clientesFiltrados = Array.isArray(store.clientes)
     ? store.clientes
@@ -185,7 +185,7 @@ useEffect(() => {
                 clientesFiltrados.map(cliente =>
                   editId === cliente.id ? (
                     <tr key={cliente.id} style={{ background: "#f7ecd7" }}>
-                      <td>
+                      <td data-label="Nombre">
                         <input
                           type="text"
                           value={editNombre}
@@ -193,7 +193,7 @@ useEffect(() => {
                           className="form-control"
                         />
                       </td>
-                      <td>
+                      <td data-label="Celular">
                         <input
                           type="number"
                           value={editCelular}
@@ -201,44 +201,48 @@ useEffect(() => {
                           className="form-control"
                         />
                       </td>
-                      <td>
-                        <button type="button" className="btn btn-sm me-2"
-                          style={{ background: "#6f4e37", color: "#fffbe7", fontWeight: "bold" }}
-                          onClick={handleUpdateCliente}
-                          title="Guardar">
-                          <i className="bi bi-check-lg"></i>
-                        </button>
-                        <button className="btn btn-sm"
-                          style={{ background: "#b94a48", color: "#fffbe7", fontWeight: "bold" }}
-                          onClick={() => setEditId(null)}
-                          title="Cancelar">
-                          <i className="bi bi-x-lg"></i>
-                        </button>
+                      <td data-label="Acciones" >
+                        <div className="d-flex flex-wrap gap-2">
+                          <button type="button" className="btn btn-sm"
+                            style={{ background: "#6f4e37", color: "#fffbe7", fontWeight: "bold" }}
+                            onClick={handleUpdateCliente}
+                            title="Guardar">
+                            <i className="bi bi-check-lg"></i>
+                          </button>
+                          <button className="btn btn-sm"
+                            style={{ background: "#b94a48", color: "#fffbe7", fontWeight: "bold" }}
+                            onClick={() => setEditId(null)}
+                            title="Cancelar">
+                            <i className="bi bi-x-lg"></i>
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ) : (
                     <tr key={cliente.id} style={{ background: "#f7ecd7" }}>
-                      <td style={{ color: "#4b2e19", fontWeight: "bold" }}>{cliente.nombre}</td>
-                      <td style={{ color: "#4b2e19" }}>{cliente.celular}</td>
-                      <td>
-                        <button className="btn btn-sm me-2"
-                          style={{ background: "#c0a16b", color: "#fffbe7", fontWeight: "bold" }}
-                          onClick={() => startEditCliente(cliente)}
-                          title="Editar">
-                          <i className="bi bi-pencil"></i>
-                        </button>
-                        <button className="btn btn-sm me-2"
-                          style={{ background: "#6f4e37", color: "#fffbe7", fontWeight: "bold" }}
-                          onClick={() => navigate(`/perfil-cliente/${cliente.id}`)}
-                          title="Ver más">
-                          <i className="bi bi-eye"></i>
-                        </button>
-                        <button className="btn btn-sm"
-                          onClick={() => handleDeleteCliente(cliente.id)}
-                          style={{ background: "#b94a48", color: "#fffbe7", fontWeight: "bold" }}
-                          title="Eliminar">
-                          <i className="bi bi-trash"></i>
-                        </button>
+                      <td data-label="Nombre" style={{ color: "#4b2e19", fontWeight: "bold", wordBreak: "break-word" }}>{cliente.nombre}</td>
+                      <td data-label="Celular" style={{ color: "#4b2e19", wordBreak: "break-word" }}>{cliente.celular}</td>
+                      <td data-label="Acciones">
+                        <div className="d-flex flex-wrap gap-2">
+                          <button className="btn btn-sm"
+                            style={{ background: "#c0a16b", color: "#fffbe7", fontWeight: "bold" }}
+                            onClick={() => startEditCliente(cliente)}
+                            title="Editar">
+                            <i className="bi bi-pencil"></i>
+                          </button>
+                          <button className="btn btn-sm"
+                            style={{ background: "#6f4e37", color: "#fffbe7", fontWeight: "bold" }}
+                            onClick={() => navigate(`/perfil-cliente/${cliente.id}`)}
+                            title="Ver más">
+                            <i className="bi bi-eye"></i>
+                          </button>
+                          <button className="btn btn-sm"
+                            onClick={() => handleDeleteCliente(cliente.id)}
+                            style={{ background: "#b94a48", color: "#fffbe7", fontWeight: "bold" }}
+                            title="Eliminar">
+                            <i className="bi bi-trash"></i>
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   )
@@ -254,6 +258,7 @@ useEffect(() => {
           </table>
         </div>
       )}
+ 
     </div>
   );
 }

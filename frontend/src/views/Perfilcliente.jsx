@@ -171,21 +171,21 @@ function PerfilCliente() {
               <tbody>
                 {enProceso.map(maquila => (
                   <tr key={maquila.id}>
-                    <td>{maquila.fecha}</td>
-                    <td>{maquila.peso_kg}</td>
-                    <td>{maquila.esta_trillado ? "Sí" : "No"}</td>
-                    <td>{maquila.peso_despues_trilla_kg || "-"}</td>
-                    <td>{maquila.grado_tostion}</td>
-                    <td>{maquila.tipo_empaque}</td>
-                    <td>{maquila.cantidad_libras || "-"}</td>
-                    <td>{maquila.peso_granel > 0 ? maquila.peso_granel : "-"}</td>
-                    <td>{maquila.observaciones || "-"}</td>
-                    <td>
+                    <td data-label="Fecha">{maquila.fecha}</td>
+                    <td data-label="Peso (kg)">{maquila.peso_kg}</td>
+                    <td data-label="¿Trillado?">{maquila.esta_trillado ? "Sí" : "No"}</td>
+                    <td data-label="Peso después de trilla">{maquila.peso_despues_trilla_kg || "-"}</td>
+                    <td data-label="Grado de tostión">{maquila.grado_tostion}</td>
+                    <td data-label="Tipo de empaque">{maquila.tipo_empaque}</td>
+                    <td data-label="Cant. libras">{maquila.cantidad_libras || "-"}</td>
+                    <td data-label="Peso granel (kg)">{maquila.peso_granel > 0 ? maquila.peso_granel : "-"}</td>
+                    <td data-label="Observaciones">{maquila.observaciones || "-"}</td>
+                    <td data-label="Estado">
                       <span className="badge d-flex align-items-center gap-2" style={{ background: "#c0a16b", color: "#4b2e19", fontWeight: "bold" }}>
                         <i className="bi bi-gear-fill spinner-border spinner-border-sm" style={{ border: "none" }}></i> En proceso
                       </span>
                     </td>
-                    <td>
+                    <td data-label="Precio">
                       {maquila.precio_total
                         ? `$${maquila.precio_total}`
                         : (
@@ -197,7 +197,7 @@ function PerfilCliente() {
                         )
                       }
                     </td>
-                    <td>
+                    <td data-label="Acciones">
                       <div className="d-flex flex-column gap-2">
                         <button
                           className="btn btn-sm"
@@ -276,22 +276,22 @@ function PerfilCliente() {
               <tbody>
                 {finalizadas.map(maquila => (
                   <tr key={maquila.id}>
-                    <td>{maquila.fecha}</td>
-                    <td>{maquila.peso_kg}</td>
-                    <td>{maquila.esta_trillado ? "Sí" : "No"}</td>
-                    <td>{maquila.peso_despues_trilla_kg || "-"}</td>
-                    <td>{maquila.grado_tostion}</td>
-                    <td>{maquila.tipo_empaque}</td>
-                    <td>{maquila.cantidad_libras || "-"}</td>
-                    <td>{maquila.peso_granel > 0 ? maquila.peso_granel : "-"}</td>
-                    <td>{maquila.observaciones || "-"}</td>
-                    <td>
+                    <td data-label="Fecha">{maquila.fecha}</td>
+                    <td data-label="Peso (kg)">{maquila.peso_kg}</td>
+                    <td data-label="¿Trillado?">{maquila.esta_trillado ? "Sí" : "No"}</td>
+                    <td data-label="Peso después de trilla">{maquila.peso_despues_trilla_kg || "-"}</td>
+                    <td data-label="Grado de tostión">{maquila.grado_tostion}</td>
+                    <td data-label="Tipo de empaque">{maquila.tipo_empaque}</td>
+                    <td data-label="Cant. libras">{maquila.cantidad_libras || "-"}</td>
+                    <td data-label="Peso granel (kg)">{maquila.peso_granel > 0 ? maquila.peso_granel : "-"}</td>
+                    <td data-label="Observaciones">{maquila.observaciones || "-"}</td>
+                    <td data-label="Estado">
                       <span className="badge bg-success">Finalizado</span>
                     </td>
-                    <td>
+                    <td data-label="Precio">
                       {maquila.precio_total_str || `$${maquila.precio_total}`}
                     </td>
-                    <td>
+                    <td data-label="Acciones">
                       <div className="d-flex flex-column gap-2">
                         <button
                           className="btn btn-sm"
@@ -343,6 +343,8 @@ function PerfilCliente() {
           />
         </>
       )}
+
+
     </div>
   );
 }
