@@ -8,12 +8,13 @@ function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
-  const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
     e.preventDefault();
     const result = await actions.login(username, password);
     if (result && result.access_token) {
-      navigate("/");
+      setTimeout(() => {
+        navigate("/");
+      }, 100); 
     } else {
       setError("Usuario o contraseña incorrectos.");
     }

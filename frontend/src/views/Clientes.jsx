@@ -17,6 +17,8 @@ function Clientes() {
   const [editNombre, setEditNombre] = useState("");
   const [editCelular, setEditCelular] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [pagina, setPagina] = useState(1);
+  const porPagina = 10;
   const location = useLocation();
 
   useEffect(() => {
@@ -31,12 +33,17 @@ function Clientes() {
   useEffect(() => {
     if (
       store.token &&
-      (store.clientes === null || (Array.isArray(store.clientes) && store.clientes.length === 0))
+      store.clientes === null
     ) {
       setIsLoading(true);
       actions.getClientes().finally(() => setIsLoading(false));
     }
   }, [store.clientes, store.token]);
+
+
+  useEffect(() => {
+    setPagina(1);
+  }, [busqueda]);
 
   const handleAddCliente = async (e) => {
     e.preventDefault();
@@ -99,8 +106,14 @@ function Clientes() {
           cliente.celular.includes(busqueda)
         )
         .reverse()
-        .slice(0, 5)
     : [];
+
+  const totalPaginas = Math.ceil(clientesFiltrados.length / porPagina);
+
+  const clientesAMostrar = clientesFiltrados.slice(
+    (pagina - 1) * porPagina,
+    pagina * porPagina
+  );
 
   return (
     <div className="container py-4">
@@ -181,8 +194,8 @@ function Clientes() {
               </tr>
             </thead>
             <tbody>
-              {clientesFiltrados.length > 0 ? (
-                clientesFiltrados.map(cliente =>
+              {clientesAMostrar.length > 0 ? (
+                clientesAMostrar.map(cliente =>
                   editId === cliente.id ? (
                     <tr key={cliente.id} style={{ background: "#f7ecd7" }}>
                       <td data-label="Nombre">
@@ -256,9 +269,31 @@ function Clientes() {
               )}
             </tbody>
           </table>
+      
+          {totalPaginas > 1 && (
+            <div className="text-center mb-3">
+              <button
+                className="btn btn-outline-secondary btn-sm mx-1"
+                disabled={pagina === 1}
+                onClick={() => setPagina(p => p - 1)}
+              >
+                Anterior
+              </button>
+              <span style={{ fontWeight: "bold", color: "#6f4e37" }}>
+                Página {pagina} de {totalPaginas}
+              </span>
+              <button
+                className="btn btn-outline-secondary btn-sm mx-1"
+                disabled={pagina === totalPaginas}
+                onClick={() => setPagina(p => p + 1)}
+              >
+                Siguiente
+              </button>
+            </div>
+          )}
         </div>
       )}
- 
+
     </div>
   );
 }
