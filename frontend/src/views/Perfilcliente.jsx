@@ -8,7 +8,7 @@ import withReactContent from 'sweetalert2-react-content';
 const MySwal = withReactContent(Swal);
 import MaquilaViewModal from "../components/MaquilaViewModal.jsx";
 
-function Perfilcliente() {
+function PerfilCliente() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { store, actions } = useContext(Context);
@@ -349,4 +349,4 @@ function Perfilcliente() {
   );
 }
 
-export default Perfilcliente;
+export default PerfilCliente;
