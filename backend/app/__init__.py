@@ -22,7 +22,7 @@ def create_app():
 
     # Configuración básica
     app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SQLALCHEMY_DATABASE_URI")
 
     # Extensiones
     CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
