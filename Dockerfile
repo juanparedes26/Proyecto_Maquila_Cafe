@@ -25,4 +25,4 @@ COPY --from=frontend-builder /app/dist ./backend/app/front/build
 
 EXPOSE 5100
 
-CMD ["gunicorn", "--chdir", "backend", "app.run:app", "--bind", "0.0.0.0:5100", "--workers", "4", "--worker-class", "gevent"]
+CMD ["gunicorn", "--chdir", "backend", "app.run:app", "--bind", "0.0.0.0:${PORT}", "--workers", "4", "--worker-class", "gevent"]
