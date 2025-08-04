@@ -38,10 +38,10 @@ def create_app():
     register_admin_views(admin, db)
 
     # Creamos carpeta de base de datos si no existe
-    db_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'instance', 'mydatabase.db')
-    print(f"Ruta de la base de datos: {db_path}")
-    if not os.path.exists(os.path.dirname(db_path)):
-        os.makedirs(os.path.dirname(db_path))
+    #db_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'instance', 'mydatabase.db')
+    #|print(f"Ruta de la base de datos: {db_path}")
+    #if| not os.path.exists(os.path.dirname(db_path)):
+     #   os.makedirs(os.path.dirname(db_path))
 
     # Registramos blueprints
     from app.routes.admin_bp import admin_bp
