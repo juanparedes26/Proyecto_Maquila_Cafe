@@ -116,6 +116,11 @@ const getState = ({ getStore, setStore }) => {
 						body: JSON.stringify(cliente)
 					});
 					/*const data = await res.json();*/
+					if (res.status === 409) {
+						toast.error('Ya existe un cliente con ese número de celular.');
+						return false;
+					}
+
 					if (res.ok) {
 					
 						return true;

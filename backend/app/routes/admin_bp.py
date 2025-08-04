@@ -115,6 +115,9 @@ def create_cliente():
     try:
         nombre = request.json.get('nombre')
         celular = request.json.get('celular')
+        
+        if Cliente.query.filter_by(celular=celular).first():
+            return jsonify({'error': 'Ya existe un cliente con ese número de celular.'}), 409
 
         if not nombre or not celular:
             return jsonify({'error': 'Nombre and Celular are required.'}), 400
