@@ -71,7 +71,9 @@ const getState = ({ getStore, setStore }) => {
 				setStore({
 					...store,
 					token: null,
-					currentUser: null
+					currentUser: null,
+					clientes: null,
+					
 				});
 			
 				

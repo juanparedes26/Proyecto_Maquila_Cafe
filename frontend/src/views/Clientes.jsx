@@ -28,7 +28,7 @@ function Clientes() {
     }
     setIsLoading(true);
     actions.getClientes().finally(() => setIsLoading(false));
-  }, [store.token, location.pathname]);
+  }, [store.token]);
 
   useEffect(() => {
     if (
