@@ -72,7 +72,7 @@ const getState = ({ getStore, setStore }) => {
 					...store,
 					token: null,
 					currentUser: null,
-					clientes: null,
+					clientes: [],
 					
 				});
 			
