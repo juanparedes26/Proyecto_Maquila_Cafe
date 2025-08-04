@@ -51,6 +51,6 @@ def create_app():
     from app.routes.public_bp import public_bp
     app.register_blueprint(admin_bp, url_prefix='/panel')  
     app.register_blueprint(public_bp, url_prefix='/public')
-    print("Blueprints registrados:", app.blueprints)
+    app.logger.info("Blueprints registrados: %s", app.blueprints)
 
     return app
