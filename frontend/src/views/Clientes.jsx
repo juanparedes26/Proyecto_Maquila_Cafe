@@ -31,17 +31,6 @@ function Clientes() {
   }, [store.token]);
 
   useEffect(() => {
-    if (
-      store.token &&
-      store.clientes === null
-    ) {
-      setIsLoading(true);
-      actions.getClientes().finally(() => setIsLoading(false));
-    }
-  }, [store.clientes, store.token]);
-
-
-  useEffect(() => {
     setPagina(1);
   }, [busqueda]);
 
@@ -97,6 +86,12 @@ function Clientes() {
     } else {
       toast.error("No se pudo actualizar el cliente");
     }
+  };
+
+  const handleRefresh = async () => {
+    setIsLoading(true);
+    await actions.getClientes();
+    setIsLoading(false);
   };
 
   const clientesFiltrados = Array.isArray(store.clientes)
@@ -176,6 +171,17 @@ function Clientes() {
         </div>
       </div>
 
+      {/* Botón Refrescar */}
+      <div className="mb-3 text-end">
+        <button
+          className="btn btn-outline-secondary"
+          onClick={handleRefresh}
+          disabled={isLoading}
+        >
+          <i className="bi bi-arrow-clockwise"></i> Refrescar
+        </button>
+      </div>
+
       {isLoading ? (
         <div className="text-center my-5">
           <div className="spinner-border" style={{ color: "#c0a16b", width: "3rem", height: "3rem" }} role="status">
@@ -183,7 +189,7 @@ function Clientes() {
           </div>
           <div style={{ color: "#6f4e37", marginTop: "10px" }}>Cargando clientes...</div>
         </div>
-      ) : (
+      ) : store.token && (
         <div className="table-responsive">
           <table className="table align-middle table-striped table-hover" style={{ background: "#fffbe7", borderRadius: "12px", overflow: "hidden" }}>
             <thead style={{ background: "#6f4e37", color: "#fffbe7" }}>

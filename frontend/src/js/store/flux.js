@@ -14,7 +14,7 @@ const getState = ({ getStore, setStore }) => {
 			users: [], // Lista de usuarios que viene de register , en mi caso serian los admins
 			token: initialToken, // Token de autenticación
 			currentUser: null ,// Usuario actual que ha iniciado sesión
-			clientes: null, // Lista de clientes que se obtienen al hacer getClientes
+			clientes: [], // Lista de clientes que se obtienen al hacer getClientes
 			maquilas: [], // Lista de maquilas que se obtienen al hacer getMaquilas
 
 		},
