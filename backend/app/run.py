@@ -15,10 +15,7 @@ def serve_static_files(path):
     else:
         return send_from_directory(app.static_folder, "index.html")
     # Handler global para errores 500
-@app.errorhandler(500)
-def internal_error(error):
-        app.logger.error("Error 500: %s", error, exc_info=True)
-        return {"msg": "Internal server error"}, 500
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5100)

@@ -52,5 +52,9 @@ def create_app():
     app.register_blueprint(admin_bp, url_prefix='/panel')  
     app.register_blueprint(public_bp, url_prefix='/public')
     app.logger.info("Blueprints registrados: %s", app.blueprints)
+    @app.errorhandler(500)
+    def internal_error(error):
+        app.logger.error("Error 500: %s", error, exc_info=True)
+        return {"msg": "Internal server error"}, 500
 
     return app
