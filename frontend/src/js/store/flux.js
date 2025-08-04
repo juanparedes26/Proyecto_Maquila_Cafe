@@ -84,7 +84,7 @@ const getState = ({ getStore, setStore }) => {
 					const res = await fetch(`${backendUrl}/clientes?ts=${Date.now()}`, {
 						method: "GET",
 						headers: {
-							"Content-Type": "application/json",
+							/*"Content-Type": "application/json",*/
 							"Authorization": "Bearer " + store.token 
 						}
 					});
@@ -140,7 +140,7 @@ const getState = ({ getStore, setStore }) => {
 					const res = await fetch(`${backendUrl}/maquilas`, {
 						method: "GET",
 						headers: {
-							"Content-Type": "application/json",
+							// "Content-Type": "application/json",
 							"Authorization": "Bearer " + store.token 
 						}
 					});
@@ -198,7 +198,7 @@ const getState = ({ getStore, setStore }) => {
 					const res = await fetch(`${backendUrl}/clientes/${clienteId}/maquilas`, {
 						method: "GET",
 						headers: {
-							"Content-Type": "application/json",
+							// "Content-Type": "application/json",
 							"Authorization": "Bearer " + store.token
 						}
 					});
@@ -369,7 +369,7 @@ const getState = ({ getStore, setStore }) => {
 					const res = await fetch(`${backendUrl}/clientes/${clienteId}`, {
 						method: "GET",
 						headers: {
-							"Content-Type": "application/json",
+							// "Content-Type": "application/json",
 							"Authorization": "Bearer " + store.token
 						}
 					});
@@ -399,7 +399,7 @@ const getState = ({ getStore, setStore }) => {
 					const res = await fetch(`${backendUrl}/maquilas/${maquilaId}`, {
 						method: "GET",
 						headers: {
-							"Content-Type": "application/json",
+							// "Content-Type": "application/json",
 							"Authorization": "Bearer " + store.token
 						}
 					});
