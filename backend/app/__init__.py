@@ -28,7 +28,8 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SQLALCHEMY_DATABASE_URI")
 
     # Extensiones
-    CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+    # CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+    CORS(app, resources={r"/*": {"origins": "https://proyecto-maquila-cafe-1.onrender.com"}}, supports_credentials=True)
     db.init_app(app)
     bcrypt.init_app(app)
     jwt.init_app(app)
