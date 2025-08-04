@@ -3,6 +3,8 @@ from flask_jwt_extended import JWTManager, create_access_token, jwt_required, ge
 from app import db, bcrypt
 from app.models import User , Cliente , Maquila
 from datetime import timedelta
+from flask import current_app
+import traceback
 
 
 admin_bp = Blueprint('admin_bp', __name__)
@@ -45,7 +47,8 @@ def create_user():
         return jsonify({'message': 'User created successfully.','user_created':good_to_share_user}), 201
 
     except Exception as e:
-        return jsonify({'error': 'Error in user creation: ' + str(e)}), 500
+       current_app.logger.error(traceback.format_exc())
+       return jsonify({'error': 'Error in user creation: ' + str(e)}), 500
 
 
 #RUTA LOG-IN ( CON TOKEN DE RESPUESTA )
@@ -79,7 +82,8 @@ def get_token():
             return jsonify({"Error":"Contraseña  incorrecta"}),401
     
     except Exception as e:
-        return jsonify({"Error":"El username proporcionado no corresponde a ninguno registrado: " + str(e)}), 500
+       current_app.logger.error(traceback.format_exc())
+       return jsonify({"Error":"El username proporcionado no corresponde a ninguno registrado: " + str(e)}), 500
     
     
 
@@ -125,7 +129,8 @@ def create_cliente():
         }), 201
 
     except Exception as e:
-        return jsonify({'error': 'Error in cliente creation: ' + str(e)}), 500
+       current_app.logger.error(traceback.format_exc())
+       return jsonify({'error': 'Error in cliente creation: ' + str(e)}), 500
     
 @admin_bp.route("/add/maquilas", methods=["POST"])
 @jwt_required()
@@ -198,7 +203,8 @@ def create_maquila():
         }), 201
 
     except Exception as e:
-        return jsonify({'error': 'Error in maquila creation: ' + str(e)}), 500
+         current_app.logger.error(traceback.format_exc())
+         return jsonify({'error': 'Error in maquila creation: ' + str(e)}), 500
     
 @admin_bp.route("/maquilas", methods=["GET"])
 @jwt_required()
@@ -237,6 +243,7 @@ def get_maquilas():
         return jsonify(maquila_list), 200
 
     except Exception as e:
+        current_app.logger.error(traceback.format_exc())
         return jsonify({'error': 'Error fetching maquilas: ' + str(e)}), 500
     
 @admin_bp.route("/maquilas/<int:maquila_id>", methods=["GET"])
