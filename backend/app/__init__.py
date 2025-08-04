@@ -8,7 +8,7 @@ from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from flask_migrate import Migrate
 from dotenv import load_dotenv
-
+import logging
 # Instancias que se inicializan más adelante
 db = SQLAlchemy()
 bcrypt = Bcrypt()
@@ -19,7 +19,10 @@ def create_app():
     load_dotenv()
 
     app = Flask(__name__, static_folder="front/build", static_url_path="/")
-
+    if not app.debug:
+        gunicorn_error_logger = logging.getLogger('gunicorn.error')
+        app.logger.handlers = gunicorn_error_logger.handlers
+        app.logger.setLevel(gunicorn_error_logger.level)
     # Configuración básica
     app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SQLALCHEMY_DATABASE_URI")
