@@ -26,4 +26,5 @@ COPY --from=frontend-builder /app/dist ./backend/app/front/build
 
 EXPOSE 5100
 
-CMD gunicorn --chdir backend app.run:app --bind 0.0.0.0:$PORT --workers 4 --worker-class gevent
+...existing code...
+CMD gunicorn --chdir backend "app.run:create_app()" --bind 0.0.0.0:$PORT --workers 4 --worker-class gevent
