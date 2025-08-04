@@ -62,7 +62,7 @@ def get_token():
         if not username or not password:
             return jsonify({'error': 'Username and password are required.'}), 400
         
-        login_user = User.query.filter_by(username=request.json['username']).one()
+        login_user = User.query.filter_by(username=request.json['username']).first()
 
         password_from_db = login_user.password
         true_o_false = bcrypt.check_password_hash(password_from_db, password)
