@@ -271,7 +271,7 @@ const getState = ({ getStore, setStore }) => {
 					const res = await fetch(`${backendUrl}/clientes/${clienteId}`, {
 						method: "DELETE",
 						headers: {
-							"Content-Type": "application/json",
+							// "Content-Type": "application/json",
 							"Authorization": "Bearer " + store.token
 						}
 					});
@@ -301,7 +301,7 @@ const getState = ({ getStore, setStore }) => {
 					const res = await fetch(`${backendUrl}/maquilas/${maquilaId}`, {
 						method: "DELETE",
 						headers: {
-							"Content-Type": "application/json",
+							// "Content-Type": "application/json",
 							"Authorization": "Bearer " + store.token
 						}
 					});
